@@ -5,7 +5,7 @@
   "description": "Aeturnis Online MMORPG - Monorepo",
   "author": "Aeturnis Team",
   "license": "UNLICENSED",
-  "packageManager": "pnpm@8.15.0",
+  "packageManager": "pnpm@9.15.0",
   "scripts": {
     "dev": "pnpm -r --parallel run dev",
     "build": "pnpm -r run build",
@@ -43,6 +43,6 @@
   },
   "engines": {
     "node": ">=18.0.0",
-    "pnpm": ">=8.0.0"
+    "pnpm": ">=9.0.0"
   }
 }
