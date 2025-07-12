@@ -37,12 +37,14 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 'lts/*'
-          corepack: true
 
-      - name: Setup Yarn
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Setup Package Manager
         run: |
-          yarn set version 4.0.2
-          echo "Yarn version: $(yarn --version)"
+          corepack prepare --activate
+          yarn --version
 
       - name: Install dependencies
         run: yarn install --immutable
