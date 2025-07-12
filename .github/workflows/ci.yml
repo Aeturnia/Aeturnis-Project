@@ -38,14 +38,14 @@ jobs:
         with:
           node-version: 'lts/*'
 
-      - name: Enable Corepack
-        run: corepack enable
-
-      - name: Install Yarn
-        run: corepack prepare yarn@4.0.2 --activate
+      - name: Enable Corepack and Yarn
+        run: |
+          corepack enable
+          corepack prepare yarn@stable --activate
+          yarn --version
 
       - name: Install dependencies
-        run: yarn install --immutable --check-cache
+        run: yarn install --immutable
 
       - name: Run lint
         run: yarn lint
