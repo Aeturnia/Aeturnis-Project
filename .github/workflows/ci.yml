@@ -1,0 +1,96 @@
+name: CI
+
+on:
+  push:
+    branches: [main, 'feature/**', 'feat/**']
+  pull_request:
+    branches: [main]
+
+env:
+  NODE_ENV: test
+  DATABASE_URL: ${{ secrets.DATABASE_URL || 'postgresql://test:test@localhost:5432/aeturnis_test' }}
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: aeturnis_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          cache: 'yarn'
+
+      - name: Install dependencies
+        run: yarn install --immutable --check-cache
+
+      - name: Run lint
+        run: yarn lint
+
+      - name: Run tests with coverage
+        run: yarn test --coverage
+        env:
+          CI: true
+
+      - name: Build packages
+        run: yarn build
+
+      - name: Upload server build artifacts
+        uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: server-build
+          path: packages/server/dist
+          retention-days: 7
+
+      - name: Upload client build artifacts
+        uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: client-build
+          path: packages/client/dist
+          retention-days: 7
+
+      - name: Upload coverage reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage-reports
+          path: |
+            packages/*/coverage
+            coverage
+          retention-days: 7
+
+  # Reusable status check for PR protection rules
+  status-check:
+    needs: ci
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: CI Status Check
+        run: |
+          if [[ "${{ needs.ci.result }}" == "success" ]]; then
+            echo "✅ CI passed successfully"
+            exit 0
+          else
+            echo "❌ CI failed"
+            exit 1
+          fi
