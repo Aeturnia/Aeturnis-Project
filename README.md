@@ -6,7 +6,7 @@ A multiplayer online RPG game built with Node.js and modern web technologies.
 
 ## Project Structure
 
-This is a monorepo using Yarn workspaces:
+This is a monorepo using pnpm workspaces:
 
 - `packages/server/` - Game server backend
 - `packages/client/` - Web client frontend  
@@ -17,26 +17,29 @@ This is a monorepo using Yarn workspaces:
 ### Prerequisites
 
 - Node.js (LTS version)
-- Yarn 4.x
+- pnpm 8.x
 - PostgreSQL
 
 ### Setup
 
 ```bash
+# Install pnpm (if not already installed)
+npm install -g pnpm
+
 # Install dependencies
-yarn install
+pnpm install
 
 # Run development servers
-yarn dev
+pnpm dev
 
 # Run tests
-yarn test
+pnpm test
 
 # Run linting
-yarn lint
+pnpm lint
 
 # Build all packages
-yarn build
+pnpm build
 ```
 
 ### Running CI Locally
