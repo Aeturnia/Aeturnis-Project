@@ -2,6 +2,5 @@
 
 ## Reports
 
-<!-- Example entries:
-- filename.md - Brief description - Date - Status
--->
+- Aeturnis Project Implementation Plan.txt - Original implementation plan - Active
+- aeturnis-implementation-plan.md - Aeturnis implementation plan v5.0 with catalog tags - Active
