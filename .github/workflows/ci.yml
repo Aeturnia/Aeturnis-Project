@@ -2,118 +2,39 @@ name: CI
 
 on:
   push:
-    branches: [main, 'feature/**', 'feat/**']
+    branches:
+      - main
+      - 'feature/**'
   pull_request:
-    branches: [main]
-
-env:
-  NODE_ENV: test
-  DATABASE_URL: ${{ secrets.DATABASE_URL || 'postgresql://test:test@localhost:5432/aeturnis_test' }}
+    branches:
+      - main
 
 jobs:
-  ci:
+  build:
     runs-on: ubuntu-latest
-
-    services:
-      postgres:
-        image: postgres:16-alpine
-        env:
-          POSTGRES_USER: test
-          POSTGRES_PASSWORD: test
-          POSTGRES_DB: aeturnis_test
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        ports:
-          - 5432:5432
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
+      - uses: actions/checkout@v4
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 'lts/*'
-
       - name: Install pnpm
         uses: pnpm/action-setup@v2
         with:
           version: 9
           run_install: false
-
-      - name: Get pnpm store directory
-        shell: bash
-        run: |
-          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
-
-      - name: Setup pnpm cache
-        uses: actions/cache@v3
-        with:
-          path: ${{ env.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
-
       - name: Install dependencies
-        run: |
-          if [ -f "pnpm-lock.yaml" ]; then
-            pnpm install --frozen-lockfile
-          else
-            pnpm install
-          fi
-
-      - name: Run lint
+        run: pnpm install --frozen-lockfile
+      - name: Lint
         run: pnpm lint
-
-      - name: Run tests with coverage
-        run: pnpm test -- --coverage
-        env:
-          CI: true
-
-      - name: Build packages
+      - name: Test
+        run: pnpm test --coverage
+      - name: Build
         run: pnpm build
-
-      - name: Upload server build artifacts
-        uses: actions/upload-artifact@v4
-        if: success()
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v3
         with:
-          name: server-build
-          path: packages/server/dist
-          retention-days: 7
-
-      - name: Upload client build artifacts
-        uses: actions/upload-artifact@v4
-        if: success()
-        with:
-          name: client-build
-          path: packages/client/dist
-          retention-days: 7
-
-      - name: Upload coverage reports
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: coverage-reports
+          name: build-artifacts
           path: |
-            packages/*/coverage
-            coverage
-          retention-days: 7
-
-  # Reusable status check for PR protection rules
-  status-check:
-    needs: ci
-    runs-on: ubuntu-latest
-    if: always()
-    steps:
-      - name: CI Status Check
-        run: |
-          if [[ "${{ needs.ci.result }}" == "success" ]]; then
-            echo "✅ CI passed successfully"
-            exit 0
-          else
-            echo "❌ CI failed"
-            exit 1
-          fi
+            packages/server/dist
+            packages/client/dist
