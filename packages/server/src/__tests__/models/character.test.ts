@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
@@ -8,6 +8,10 @@ describe('Character Model CRUD', () => {
 
   beforeEach(async () => {
     // Clean up and create test account
+    await prisma.xpLedger.deleteMany();
+    await prisma.transaction.deleteMany();
+    await prisma.bankAccount.deleteMany();
+    await prisma.pkKillLog.deleteMany();
     await prisma.character.deleteMany();
     await prisma.account.deleteMany();
 
@@ -18,6 +22,16 @@ describe('Character Model CRUD', () => {
       },
     });
     accountId = account.id;
+  });
+
+  afterEach(async () => {
+    // Clean up after each test
+    await prisma.xpLedger.deleteMany();
+    await prisma.transaction.deleteMany();
+    await prisma.bankAccount.deleteMany();
+    await prisma.pkKillLog.deleteMany();
+    await prisma.character.deleteMany();
+    await prisma.account.deleteMany();
   });
 
   it('should create a character', async () => {

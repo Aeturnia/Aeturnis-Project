@@ -1,56 +1,32 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, afterEach } from 'vitest';
 import { PrismaClient } from '@prisma/client';
+import { createCharacterWithBankAccount, cleanupTestData } from '../helpers/factories';
 
 const prisma = new PrismaClient();
 
 describe('BankAccount Model CRUD', () => {
-  let characterId: string;
-
-  beforeEach(async () => {
-    // Clean up and create test data
-    await prisma.transaction.deleteMany();
-    await prisma.bankAccount.deleteMany();
-    await prisma.character.deleteMany();
-    await prisma.account.deleteMany();
-
-    const account = await prisma.account.create({
-      data: {
-        email: `bank-test-${Date.now()}@example.com`,
-        hashedPassword: 'hash',
-      },
-    });
-
-    const character = await prisma.character.create({
-      data: {
-        accountId: account.id,
-        name: `BankTestHero-${Date.now()}`,
-        gold: 1000,
-      },
-    });
-
-    characterId = character.id;
+  afterEach(async () => {
+    await cleanupTestData();
   });
 
   it('should create a bank account', async () => {
-    const bankAccount = await prisma.bankAccount.create({
-      data: {
-        characterId,
-        balance: 5000,
-      },
+    const { character } = await createCharacterWithBankAccount({
+      bankAccount: { balance: 5000 },
+    });
+
+    const bankAccount = await prisma.bankAccount.findUnique({
+      where: { characterId: character.id },
     });
 
     expect(bankAccount).toBeDefined();
-    expect(bankAccount.id).toBeDefined();
-    expect(bankAccount.balance).toBe(5000);
-    expect(bankAccount.createdAt).toBeInstanceOf(Date);
+    expect(bankAccount?.id).toBeDefined();
+    expect(bankAccount?.balance).toBe(5000);
+    expect(bankAccount?.createdAt).toBeInstanceOf(Date);
   });
 
   it('should read bank account with character', async () => {
-    const bankAccount = await prisma.bankAccount.create({
-      data: {
-        characterId,
-        balance: 10000,
-      },
+    const { character, bankAccount } = await createCharacterWithBankAccount({
+      bankAccount: { balance: 10000 },
     });
 
     const found = await prisma.bankAccount.findUnique({
@@ -62,15 +38,12 @@ describe('BankAccount Model CRUD', () => {
 
     expect(found).toBeDefined();
     expect(found?.balance).toBe(10000);
-    expect(found?.character.name).toContain('BankTestHero-');
+    expect(found?.character.id).toBe(character.id);
   });
 
   it('should update bank balance', async () => {
-    const bankAccount = await prisma.bankAccount.create({
-      data: {
-        characterId,
-        balance: 1000,
-      },
+    const { bankAccount } = await createCharacterWithBankAccount({
+      bankAccount: { balance: 1000 },
     });
 
     const updated = await prisma.bankAccount.update({
@@ -86,17 +59,14 @@ describe('BankAccount Model CRUD', () => {
   });
 
   it('should enforce one bank account per character', async () => {
-    await prisma.bankAccount.create({
-      data: {
-        characterId,
-        balance: 1000,
-      },
+    const { character } = await createCharacterWithBankAccount({
+      bankAccount: { balance: 1000 },
     });
 
     await expect(
       prisma.bankAccount.create({
         data: {
-          characterId,
+          characterId: character.id,
           balance: 2000,
         },
       })
@@ -104,11 +74,8 @@ describe('BankAccount Model CRUD', () => {
   });
 
   it('should delete bank account', async () => {
-    const bankAccount = await prisma.bankAccount.create({
-      data: {
-        characterId,
-        balance: 1000,
-      },
+    const { bankAccount } = await createCharacterWithBankAccount({
+      bankAccount: { balance: 1000 },
     });
 
     await prisma.bankAccount.delete({
@@ -123,15 +90,12 @@ describe('BankAccount Model CRUD', () => {
   });
 
   it('should find bank account by character', async () => {
-    await prisma.bankAccount.create({
-      data: {
-        characterId,
-        balance: 7500,
-      },
+    const { character } = await createCharacterWithBankAccount({
+      bankAccount: { balance: 7500 },
     });
 
     const found = await prisma.bankAccount.findUnique({
-      where: { characterId },
+      where: { characterId: character.id },
     });
 
     expect(found).toBeDefined();
@@ -139,13 +103,14 @@ describe('BankAccount Model CRUD', () => {
   });
 
   it('should handle large balances', async () => {
-    const bankAccount = await prisma.bankAccount.create({
-      data: {
-        characterId,
-        balance: 999999999,
-      },
+    const { character } = await createCharacterWithBankAccount({
+      bankAccount: { balance: 999999999 },
     });
 
-    expect(bankAccount.balance).toBe(999999999);
+    const bankAccount = await prisma.bankAccount.findUnique({
+      where: { characterId: character.id },
+    });
+
+    expect(bankAccount?.balance).toBe(999999999);
   });
 });

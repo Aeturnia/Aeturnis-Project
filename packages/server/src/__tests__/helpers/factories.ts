@@ -50,7 +50,7 @@ export async function createAccountWithCharacter(overrides?: {
  */
 export async function createCharacterWithBankAccount(overrides?: {
   character?: Partial<{ name: string; level: number }>;
-  bankAccount?: Partial<{ goldBalance: number }>;
+  bankAccount?: Partial<{ balance: number }>;
 }) {
   const { account, character } = await createAccountWithCharacter({
     character: overrides?.character,
@@ -59,7 +59,7 @@ export async function createCharacterWithBankAccount(overrides?: {
   const bankAccount = await prisma.bankAccount.create({
     data: {
       characterId: character.id,
-      goldBalance: overrides?.bankAccount?.goldBalance ?? 0,
+      balance: overrides?.bankAccount?.balance ?? 0,
     },
   });
 
@@ -76,7 +76,7 @@ export async function createBankingTransaction(overrides?: {
 
   const transaction = await prisma.transaction.create({
     data: {
-      bankAccountId: bankAccount.id,
+      characterId: character.id,
       amount: overrides?.transaction?.amount ?? 100,
       type: overrides?.transaction?.type ?? 'DEPOSIT',
       timestamp: new Date(),
@@ -90,14 +90,14 @@ export async function createBankingTransaction(overrides?: {
  * Creates an XP ledger entry with proper character
  */
 export async function createXpLedgerEntry(overrides?: {
-  xpLedger?: Partial<{ amount: number; reason: string }>;
+  xpLedger?: Partial<{ xpChange: number; reason: string }>;
 }) {
   const { account, character } = await createAccountWithCharacter();
 
   const xpLedger = await prisma.xpLedger.create({
     data: {
       characterId: character.id,
-      amount: overrides?.xpLedger?.amount ?? 100,
+      xpChange: overrides?.xpLedger?.xpChange ?? 100,
       reason: overrides?.xpLedger?.reason ?? 'Quest completion',
       timestamp: new Date(),
     },

@@ -1,38 +1,20 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, afterEach } from 'vitest';
 import { PrismaClient, TransactionType } from '@prisma/client';
+import { createAccountWithCharacter, cleanupTestData } from '../helpers/factories';
 
 const prisma = new PrismaClient();
 
 describe('Transaction Model CRUD', () => {
-  let characterId: string;
-
-  beforeEach(async () => {
-    // Clean up and create test data
-    await prisma.transaction.deleteMany();
-    await prisma.character.deleteMany();
-    await prisma.account.deleteMany();
-
-    const account = await prisma.account.create({
-      data: {
-        email: `transaction-test-${Date.now()}@example.com`,
-        hashedPassword: 'hash',
-      },
-    });
-
-    const character = await prisma.character.create({
-      data: {
-        accountId: account.id,
-        name: `TransactionTestHero-${Date.now()}`,
-      },
-    });
-
-    characterId = character.id;
+  afterEach(async () => {
+    await cleanupTestData();
   });
 
   it('should create a deposit transaction', async () => {
+    const { character } = await createAccountWithCharacter();
+
     const transaction = await prisma.transaction.create({
       data: {
-        characterId,
+        characterId: character.id,
         amount: 1000,
         type: TransactionType.DEPOSIT,
         description: 'Test deposit',
@@ -48,9 +30,11 @@ describe('Transaction Model CRUD', () => {
   });
 
   it('should create a withdrawal transaction', async () => {
+    const { character } = await createAccountWithCharacter();
+
     const transaction = await prisma.transaction.create({
       data: {
-        characterId,
+        characterId: character.id,
         amount: 500,
         type: TransactionType.WITHDRAWAL,
         description: 'Test withdrawal',
@@ -62,9 +46,11 @@ describe('Transaction Model CRUD', () => {
   });
 
   it('should create a death penalty transaction', async () => {
+    const { character } = await createAccountWithCharacter();
+
     const transaction = await prisma.transaction.create({
       data: {
-        characterId,
+        characterId: character.id,
         amount: 2000,
         type: TransactionType.DEATH_PENALTY,
         description: 'Lost all unbanked gold on death',
@@ -76,9 +62,11 @@ describe('Transaction Model CRUD', () => {
   });
 
   it('should read transactions with character', async () => {
+    const { character } = await createAccountWithCharacter();
+
     const transaction = await prisma.transaction.create({
       data: {
-        characterId,
+        characterId: character.id,
         amount: 750,
         type: TransactionType.INTEREST,
         description: 'Daily interest',
@@ -93,26 +81,28 @@ describe('Transaction Model CRUD', () => {
     });
 
     expect(found).toBeDefined();
-    expect(found?.character.name).toContain('TransactionTestHero-');
+    expect(found?.character.id).toBe(character.id);
   });
 
   it('should find all transactions for a character', async () => {
+    const { character } = await createAccountWithCharacter();
+
     await prisma.transaction.createMany({
       data: [
         {
-          characterId,
+          characterId: character.id,
           amount: 100,
           type: TransactionType.DEPOSIT,
           description: 'Deposit 1',
         },
         {
-          characterId,
+          characterId: character.id,
           amount: 50,
           type: TransactionType.WITHDRAWAL,
           description: 'Withdrawal 1',
         },
         {
-          characterId,
+          characterId: character.id,
           amount: 25,
           type: TransactionType.FEE,
           description: 'Bank fee',
@@ -121,7 +111,7 @@ describe('Transaction Model CRUD', () => {
     });
 
     const transactions = await prisma.transaction.findMany({
-      where: { characterId },
+      where: { characterId: character.id },
       orderBy: { timestamp: 'desc' },
     });
 
@@ -132,20 +122,22 @@ describe('Transaction Model CRUD', () => {
   });
 
   it('should calculate transaction totals', async () => {
+    const { character } = await createAccountWithCharacter();
+
     await prisma.transaction.createMany({
       data: [
         {
-          characterId,
+          characterId: character.id,
           amount: 1000,
           type: TransactionType.DEPOSIT,
         },
         {
-          characterId,
+          characterId: character.id,
           amount: 300,
           type: TransactionType.WITHDRAWAL,
         },
         {
-          characterId,
+          characterId: character.id,
           amount: 50,
           type: TransactionType.INTEREST,
         },
@@ -154,7 +146,7 @@ describe('Transaction Model CRUD', () => {
 
     const deposits = await prisma.transaction.aggregate({
       where: {
-        characterId,
+        characterId: character.id,
         type: TransactionType.DEPOSIT,
       },
       _sum: {
@@ -164,7 +156,7 @@ describe('Transaction Model CRUD', () => {
 
     const withdrawals = await prisma.transaction.aggregate({
       where: {
-        characterId,
+        characterId: character.id,
         type: TransactionType.WITHDRAWAL,
       },
       _sum: {
@@ -177,9 +169,11 @@ describe('Transaction Model CRUD', () => {
   });
 
   it('should order transactions by timestamp', async () => {
+    const { character } = await createAccountWithCharacter();
+
     const tx1 = await prisma.transaction.create({
       data: {
-        characterId,
+        characterId: character.id,
         amount: 100,
         type: TransactionType.DEPOSIT,
         timestamp: new Date('2025-01-01'),
@@ -188,7 +182,7 @@ describe('Transaction Model CRUD', () => {
 
     const tx2 = await prisma.transaction.create({
       data: {
-        characterId,
+        characterId: character.id,
         amount: 200,
         type: TransactionType.DEPOSIT,
         timestamp: new Date('2025-01-02'),
@@ -196,7 +190,7 @@ describe('Transaction Model CRUD', () => {
     });
 
     const transactions = await prisma.transaction.findMany({
-      where: { characterId },
+      where: { characterId: character.id },
       orderBy: { timestamp: 'asc' },
     });
 
