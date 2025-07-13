@@ -9,7 +9,7 @@ A multiplayer online RPG game built with Node.js and modern web technologies.
 This is a monorepo using pnpm workspaces:
 
 - `packages/server/` - Game server backend
-- `packages/client/` - Web client frontend  
+- `packages/client/` - Web client frontend
 - `packages/shared/` - Shared utilities and types
 
 ## Development
@@ -51,7 +51,42 @@ You can run the CI pipeline locally using:
 
 ### Database
 
-The project uses Prisma for database management. See `packages/server/src/db/` for schema and migrations.
+The project uses Prisma for database management. See `packages/server/prisma/`
+for schema and migrations.
+
+#### Database Setup
+
+1. **Configure Environment Variables**:
+
+   ```bash
+   # Copy example environment file
+   cp packages/server/.env.example packages/server/.env
+
+   # Edit DATABASE_URL in .env file
+   ```
+
+2. **Run Migrations**:
+
+   ```bash
+   # Apply migrations to database
+   cd packages/server
+   pnpm prisma migrate deploy
+   ```
+
+3. **Seed Database** (Optional):
+
+   ```bash
+   # Populate database with test data
+   cd packages/server
+   pnpm prisma db seed
+   ```
+
+4. **Reset Database** (Development):
+   ```bash
+   # Reset and reseed database
+   cd packages/server
+   pnpm prisma migrate reset
+   ```
 
 ## Architecture
 

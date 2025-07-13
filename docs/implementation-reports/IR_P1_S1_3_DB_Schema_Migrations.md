@@ -90,6 +90,16 @@ pnpm prisma:seed
 pnpm prisma:studio
 ```
 
+### Migration Details
+
+**Migration Hash:** `20250713024743_init`  
+**Status:** ✅ Committed to repository  
+**File:** `packages/server/prisma/migrations/20250713024743_init/migration.sql`
+
+The initial migration creates all 6 tables with proper indexes, constraints, and
+foreign key relationships. All cascade deletes are configured to maintain
+referential integrity.
+
 ## 5. Seed Data
 
 - 2 test accounts with bcrypt-hashed passwords
@@ -172,12 +182,40 @@ pnpm build
 
 - `packages/server/src/__tests__/lib/prisma.test.ts` - Prisma client singleton
   tests
+- `packages/server/src/__tests__/models/account.test.ts` - Account CRUD tests (6
+  tests)
+- `packages/server/src/__tests__/models/character.test.ts` - Character CRUD
+  tests (7 tests)
+- `packages/server/src/__tests__/models/bankAccount.test.ts` - BankAccount CRUD
+  tests (7 tests)
+- `packages/server/src/__tests__/models/transaction.test.ts` - Transaction CRUD
+  tests (7 tests)
+- `packages/server/src/__tests__/models/xpLedger.test.ts` - XpLedger CRUD tests
+  (7 tests)
+- `packages/server/src/__tests__/models/pkKillLog.test.ts` - PkKillLog CRUD
+  tests (7 tests)
+- `packages/server/src/__tests__/setup.ts` - Test setup with database cleanup
 - `packages/client/src/main.test.tsx` - Client entry point tests
 - Enhanced test configurations with coverage thresholds:
   - Statements: 90%
   - Branches: 80%
   - Functions: 85%
   - Lines: 90%
+
+### CRUD Test Coverage
+
+**Total Tests:** 48 tests across 8 test files  
+**Status:** ✅ All passing  
+**Database:** Connected to production Neon database for realistic testing
+
+Each model has comprehensive CRUD tests covering:
+
+- **Create operations**: Basic creation, validation, constraints
+- **Read operations**: Single records, relationships, filtering
+- **Update operations**: Field updates, status changes
+- **Delete operations**: Hard/soft deletes, cascade behavior
+- **Business logic**: PK cooldowns, XP calculations, banking rules
+- **Data integrity**: Unique constraints, foreign keys, indexes
 
 ### Build Configuration Updates
 
