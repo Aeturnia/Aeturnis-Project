@@ -18,10 +18,10 @@ export default tseslint.config(
     ],
   },
   {
-    files: ['**/*.ts', '**/*.tsx'],
+    files: ['packages/*/src/**/*.ts', 'packages/*/src/**/*.tsx'],
     languageOptions: {
       parserOptions: {
-        project: true,
+        project: './packages/*/tsconfig.eslint.json',
         tsconfigRootDir: import.meta.dirname,
       },
     },
@@ -43,6 +43,15 @@ export default tseslint.config(
     rules: {
       '@typescript-eslint/no-var-requires': 'off',
       'no-console': 'off',
+    },
+  },
+  {
+    files: ['**/vitest.config.ts'],
+    languageOptions: {
+      parserOptions: {
+        project: './packages/*/tsconfig.eslint.json',
+        tsconfigRootDir: import.meta.dirname,
+      },
     },
   }
 );
