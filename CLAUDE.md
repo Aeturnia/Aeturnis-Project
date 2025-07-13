@@ -129,6 +129,9 @@ packages/server/
 
 ## Workflow for Pushing Only Docs Folder
 
+**IMPORTANT: Always use sparse checkout for the documentation repository to
+avoid pushing the entire codebase!**
+
 When pushing documentation updates to the docs repository:
 
 1. **Add remote if not exists**:
@@ -156,5 +159,19 @@ When pushing documentation updates to the docs repository:
    git push master-docs new-docs
    ```
 
+**Alternative method (recommended for docs-only pushes):**
+
+```bash
+# Create temporary branch with only docs
+git checkout -b docs-only-temp
+git rm -r --cached .
+git add docs/
+git commit -m "Documentation update"
+git push master-docs docs-only-temp:new-docs --force
+git checkout main
+git branch -D docs-only-temp
+```
+
 This ensures only the `/docs` folder is tracked and pushed to the documentation
-repository, keeping code and documentation separate.
+repository, keeping code and documentation separate. NEVER push the entire
+repository to the documentation repo!
