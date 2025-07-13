@@ -10,7 +10,7 @@ export class CharacterController {
   }
 
   // GET /api/characters
-  async getAll(req: Request, res: Response): Promise<void> {
+  async getAll(_req: Request, res: Response): Promise<void> {
     try {
       // TODO(claude): Extract accountId from JWT token
       const accountId = 'placeholder';
@@ -57,6 +57,14 @@ export class CharacterController {
     try {
       const { id } = req.params;
 
+      if (!id) {
+        res.status(HTTP_STATUS.BAD_REQUEST).json({
+          success: false,
+          error: 'Character ID is required',
+        });
+        return;
+      }
+
       const character = await this.characterService.getCharacter(id);
 
       res.status(HTTP_STATUS.OK).json({
@@ -79,6 +87,14 @@ export class CharacterController {
       const { id } = req.params;
       const updates = req.body;
 
+      if (!id) {
+        res.status(HTTP_STATUS.BAD_REQUEST).json({
+          success: false,
+          error: 'Character ID is required',
+        });
+        return;
+      }
+
       const character = await this.characterService.updateCharacter(id, updates);
 
       res.status(HTTP_STATUS.OK).json({
@@ -99,6 +115,14 @@ export class CharacterController {
     try {
       // TODO(claude): Verify character ownership
       const { id } = req.params;
+
+      if (!id) {
+        res.status(HTTP_STATUS.BAD_REQUEST).json({
+          success: false,
+          error: 'Character ID is required',
+        });
+        return;
+      }
 
       await this.characterService.deleteCharacter(id);
 

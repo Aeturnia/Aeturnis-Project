@@ -52,7 +52,7 @@ export class AuthController {
   }
 
   // POST /api/auth/logout
-  async logout(req: Request, res: Response): Promise<void> {
+  async logout(_req: Request, res: Response): Promise<void> {
     try {
       // TODO(claude): Extract userId from JWT token
       const userId = 'placeholder';
@@ -72,7 +72,7 @@ export class AuthController {
   }
 
   // GET /api/auth/profile
-  async getProfile(req: Request, res: Response): Promise<void> {
+  async getProfile(_req: Request, res: Response): Promise<void> {
     try {
       // TODO(claude): Extract userId from JWT token
       const userId = 'placeholder';

@@ -8,7 +8,7 @@ import { HTTP_STATUS } from './utils/constants';
 
 // Create Express application
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env['PORT'] || 3000;
 
 // eslint-disable-next-line no-console
 console.log(`Aeturnis Online Server v${GAME_VERSION}`);
@@ -56,7 +56,7 @@ app.use((err: Error, _req: express.Request, res: express.Response, _next: expres
 
   res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
     success: false,
-    error: process.env.NODE_ENV === 'production' ? 'Internal server error' : err.message,
+    error: process.env['NODE_ENV'] === 'production' ? 'Internal server error' : err.message,
   });
 });
 
@@ -69,7 +69,7 @@ app.use((_req, res) => {
 });
 
 // Start server
-if (process.env.NODE_ENV !== 'test') {
+if (process.env['NODE_ENV'] !== 'test') {
   app.listen(PORT, () => {
     // eslint-disable-next-line no-console
     console.log(`Server running on port ${PORT}`);

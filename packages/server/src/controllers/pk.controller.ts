@@ -36,6 +36,14 @@ export class PKController {
       const { characterId } = req.params;
       // TODO(claude): Add pagination support
 
+      if (!characterId) {
+        res.status(HTTP_STATUS.BAD_REQUEST).json({
+          success: false,
+          error: 'Character ID is required',
+        });
+        return;
+      }
+
       const history = await this.pkService.getKillHistory(characterId);
 
       res.status(HTTP_STATUS.OK).json({
@@ -54,6 +62,14 @@ export class PKController {
   async getCooldown(req: Request, res: Response): Promise<void> {
     try {
       const { characterId } = req.params;
+
+      if (!characterId) {
+        res.status(HTTP_STATUS.BAD_REQUEST).json({
+          success: false,
+          error: 'Character ID is required',
+        });
+        return;
+      }
 
       const cooldown = await this.pkService.checkCooldown(characterId);
 

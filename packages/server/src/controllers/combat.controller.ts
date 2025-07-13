@@ -16,6 +16,14 @@ export class CombatController {
       // TODO(claude): Validate request body with Zod
       const { killerId } = req.body;
 
+      if (!characterId) {
+        res.status(HTTP_STATUS.BAD_REQUEST).json({
+          success: false,
+          error: 'Character ID is required',
+        });
+        return;
+      }
+
       const result = await this.combatService.processDeath(characterId, killerId);
 
       res.status(HTTP_STATUS.OK).json({
@@ -36,6 +44,14 @@ export class CombatController {
     try {
       const { characterId } = req.params;
 
+      if (!characterId) {
+        res.status(HTTP_STATUS.BAD_REQUEST).json({
+          success: false,
+          error: 'Character ID is required',
+        });
+        return;
+      }
+
       const result = await this.combatService.respawn(characterId);
 
       res.status(HTTP_STATUS.OK).json({
@@ -55,6 +71,14 @@ export class CombatController {
   async getStatus(req: Request, res: Response): Promise<void> {
     try {
       const { characterId } = req.params;
+
+      if (!characterId) {
+        res.status(HTTP_STATUS.BAD_REQUEST).json({
+          success: false,
+          error: 'Character ID is required',
+        });
+        return;
+      }
 
       const status = await this.combatService.getCombatStatus(characterId);
 

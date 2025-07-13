@@ -14,6 +14,14 @@ export class BankingController {
     try {
       const { characterId } = req.params;
 
+      if (!characterId) {
+        res.status(HTTP_STATUS.BAD_REQUEST).json({
+          success: false,
+          error: 'Character ID is required',
+        });
+        return;
+      }
+
       const balance = await this.bankingService.getBalance(characterId);
 
       res.status(HTTP_STATUS.OK).json({
@@ -75,6 +83,14 @@ export class BankingController {
     try {
       const { characterId } = req.params;
       // TODO(claude): Add pagination support
+
+      if (!characterId) {
+        res.status(HTTP_STATUS.BAD_REQUEST).json({
+          success: false,
+          error: 'Character ID is required',
+        });
+        return;
+      }
 
       const transactions = await this.bankingService.getTransactions(characterId);
 
