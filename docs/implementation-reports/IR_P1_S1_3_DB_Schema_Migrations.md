@@ -114,7 +114,19 @@ pnpm prisma:studio
 - Add character creation endpoints
 - Implement death penalty system
 
-## 8. DDERF Tickets
+## 8. Production Database Configuration
+
+**Date:** 2025-07-13  
+**Provider:** Neon (PostgreSQL-compatible serverless)  
+**Region:** US East 2 (AWS)  
+**SSL:** Required (`sslmode=require`)
+
+Database has been provisioned and is ready for use. Connection details are
+securely stored in GitHub Secrets as `DATABASE_URL`. See
+`docs/guides/database-setup.md` and `docs/guides/github-secrets-setup.md` for
+configuration instructions.
+
+## 9. DDERF Tickets
 
 None identified. Schema properly supports all Phase 1 requirements including:
 
