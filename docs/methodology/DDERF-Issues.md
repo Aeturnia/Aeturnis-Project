@@ -269,7 +269,26 @@ tests ran after architecture changes.
 
 #### 5. Fix
 
-[Pending implementation]
+**Hot-patch Applied**:
+
+- Created factory helpers at
+  `/packages/server/src/__tests__/helpers/factories.ts`
+- Implemented helper functions:
+  - `createAccount()` - Creates account with test data
+  - `createAccountWithCharacter()` - Creates FK-compliant character
+  - `createCharacterWithBankAccount()` - Creates banking setup
+  - `createBankingTransaction()` - Full transaction hierarchy
+  - `createXpLedgerEntry()` - XP entry with character
+  - `createPkKillLog()` - PK log with attacker/victim
+  - `cleanupTestData()` - Removes all test data
+
+**Next Steps**:
+
+- Update failing tests to use factory helpers
+- Implement transaction wrapper (DDERF-007)
+- Adopt full factory pattern (DDERF-008)
+
+**Action Plan**: See `/docs/methodology/DDERF-006-Action-Plan.md`
 
 ---
 
