@@ -61,7 +61,7 @@ describe('Express Server Integration', () => {
       const response = await request(app).get('/unknown-route').expect(HTTP_STATUS.NOT_FOUND);
 
       expect(response.body).toHaveProperty('error');
-      expect(response.body).toHaveProperty('message');
+      expect(response.body).toHaveProperty('success', false);
     });
 
     it('should return 404 for unknown API routes', async () => {
@@ -109,9 +109,9 @@ describe('Express Server Integration', () => {
         .send({ email: 'test@example.com', password: 'password123' })
         .set('Content-Type', 'application/json');
 
-      // Even though the endpoint doesn't exist, the body should be parsed
-      // We expect a 404, not a 400 for malformed JSON
-      expect(response.status).toBe(HTTP_STATUS.NOT_FOUND);
+      // The auth endpoint exists and returns 200 with a success response
+      expect(response.status).toBe(HTTP_STATUS.OK);
+      expect(response.body).toHaveProperty('success', true);
     });
 
     it('should parse URL-encoded bodies', async () => {
@@ -120,7 +120,7 @@ describe('Express Server Integration', () => {
         .send('email=test@example.com&password=password123')
         .set('Content-Type', 'application/x-www-form-urlencoded');
 
-      expect(response.status).toBe(HTTP_STATUS.NOT_FOUND);
+      expect(response.status).toBe(HTTP_STATUS.OK);
     });
   });
 
@@ -128,9 +128,9 @@ describe('Express Server Integration', () => {
     it('should have rate limiting headers', async () => {
       const response = await request(app).get('/health');
 
-      // Rate limit headers should be present
-      expect(response.headers).toHaveProperty('x-ratelimit-limit');
-      expect(response.headers).toHaveProperty('x-ratelimit-remaining');
+      // Rate limit headers should be present (standardHeaders format)
+      expect(response.headers).toHaveProperty('ratelimit-limit');
+      expect(response.headers).toHaveProperty('ratelimit-remaining');
     });
 
     it('should enforce rate limits', async () => {
@@ -149,8 +149,8 @@ describe('Express Server Integration', () => {
 
       // Check that rate limit headers exist and are valid numbers
       const lastResponse = responses[responses.length - 1];
-      if (lastResponse.headers['x-ratelimit-remaining']) {
-        const remaining = parseInt(lastResponse.headers['x-ratelimit-remaining']);
+      if (lastResponse.headers['ratelimit-remaining']) {
+        const remaining = parseInt(lastResponse.headers['ratelimit-remaining']);
         expect(remaining).toBeGreaterThanOrEqual(0);
         expect(remaining).toBeLessThanOrEqual(100); // Default limit is 100
       }

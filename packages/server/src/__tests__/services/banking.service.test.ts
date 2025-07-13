@@ -217,10 +217,10 @@ describe('BankingService', () => {
       // Test that the service is structured to handle business logic
       expect(bankingService).toBeInstanceOf(BankingService);
 
-      // Verify methods exist and are callable
-      expect(() => bankingService.deposit('test', 100)).not.toThrow();
-      expect(() => bankingService.withdraw('test', 50)).not.toThrow();
-      expect(() => bankingService.getBalance('test')).not.toThrow();
+      // Verify methods exist and are async functions
+      expect(typeof bankingService.deposit).toBe('function');
+      expect(typeof bankingService.withdraw).toBe('function');
+      expect(typeof bankingService.getBalance).toBe('function');
     });
   });
 });

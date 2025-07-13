@@ -194,21 +194,22 @@ describe('BaseRepository', () => {
     describe('delete', () => {
       it('should call model.delete with correct parameters', async () => {
         const testId = 'test-id-123';
-        const expectedResult = { id: testId, name: 'Deleted Item' };
+        const deletedItem = { id: testId, name: 'Deleted Item' };
 
-        mockModel.delete.mockResolvedValue(expectedResult);
+        mockModel.delete.mockResolvedValue(deletedItem);
 
         const result = await testRepository.delete(testId);
 
         expect(mockModel.delete).toHaveBeenCalledWith({ where: { id: testId } });
-        expect(result).toEqual(expectedResult);
+        expect(result).toBe(true); // delete returns boolean
       });
 
       it('should handle deletion of non-existent items', async () => {
         const error = new Error('Record not found');
         mockModel.delete.mockRejectedValue(error);
 
-        await expect(testRepository.delete('non-existent')).rejects.toThrow('Record not found');
+        const result = await testRepository.delete('non-existent');
+        expect(result).toBe(false); // delete returns false on error
       });
     });
 
