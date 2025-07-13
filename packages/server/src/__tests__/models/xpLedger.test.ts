@@ -1,14 +1,8 @@
-import { describe, it, expect, afterEach } from 'vitest';
-import { PrismaClient } from '@prisma/client';
-import { createAccountWithCharacter, cleanupTestData } from '../helpers/factories';
-
-const prisma = new PrismaClient();
+import { describe, it, expect } from 'vitest';
+import { prisma } from '@/lib/prisma';
+import { createAccountWithCharacter } from '../helpers/factories';
 
 describe('XpLedger Model CRUD', () => {
-  afterEach(async () => {
-    await cleanupTestData();
-  });
-
   it('should create an XP gain entry', async () => {
     const { character } = await createAccountWithCharacter();
 

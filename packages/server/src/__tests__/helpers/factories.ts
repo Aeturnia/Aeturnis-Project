@@ -160,31 +160,34 @@ export async function cleanupTestData(retries = 3) {
   let attempt = 0;
   while (attempt < retries) {
     try {
-      // Delete in reverse order of dependencies with explicit error handling
-      const deletePromises = [
-        prisma.pkKillLog
-          .deleteMany()
-          .catch((e) => console.warn('PkKillLog cleanup warning:', e.message)),
-        prisma.xpLedger
-          .deleteMany()
-          .catch((e) => console.warn('XpLedger cleanup warning:', e.message)),
-        prisma.transaction
-          .deleteMany()
-          .catch((e) => console.warn('Transaction cleanup warning:', e.message)),
-      ];
+      // Wait a bit to ensure any pending operations complete
+      await new Promise((resolve) => setTimeout(resolve, 50));
 
-      await Promise.all(deletePromises);
+      // Delete in reverse order of dependencies
+      // Using sequential deletes to avoid foreign key conflicts
+      await prisma.pkKillLog.deleteMany().catch(() => {
+        // Ignore errors - might not have any records
+      });
 
-      // Then clean bank accounts and characters
-      await prisma.bankAccount
-        .deleteMany()
-        .catch((e) => console.warn('BankAccount cleanup warning:', e.message));
-      await prisma.character
-        .deleteMany()
-        .catch((e) => console.warn('Character cleanup warning:', e.message));
-      await prisma.account
-        .deleteMany()
-        .catch((e) => console.warn('Account cleanup warning:', e.message));
+      await prisma.xpLedger.deleteMany().catch(() => {
+        // Ignore errors - might not have any records
+      });
+
+      await prisma.transaction.deleteMany().catch(() => {
+        // Ignore errors - might not have any records
+      });
+
+      await prisma.bankAccount.deleteMany().catch(() => {
+        // Ignore errors - might not have any records
+      });
+
+      await prisma.character.deleteMany().catch(() => {
+        // Ignore errors - might not have any records
+      });
+
+      await prisma.account.deleteMany().catch(() => {
+        // Ignore errors - might not have any records
+      });
 
       break; // Success, exit retry loop
     } catch (error) {
@@ -193,8 +196,8 @@ export async function cleanupTestData(retries = 3) {
         console.error('Failed to cleanup test data after', retries, 'attempts:', error);
         throw error;
       }
-      // Wait before retry
-      await new Promise((resolve) => setTimeout(resolve, 100 * attempt));
+      // Exponential backoff before retry
+      await new Promise((resolve) => setTimeout(resolve, 100 * Math.pow(2, attempt)));
     }
   }
 }

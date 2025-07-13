@@ -1,14 +1,8 @@
-import { describe, it, expect, afterEach } from 'vitest';
-import { PrismaClient } from '@prisma/client';
-import { createPkKillLog, cleanupTestData } from '../helpers/factories';
-
-const prisma = new PrismaClient();
+import { describe, it, expect } from 'vitest';
+import { prisma } from '@/lib/prisma';
+import { createPkKillLog } from '../helpers/factories';
 
 describe('PkKillLog Model CRUD', () => {
-  afterEach(async () => {
-    await cleanupTestData();
-  });
-
   it('should create a PK kill log', async () => {
     const { attacker, victim } = await createPkKillLog();
 

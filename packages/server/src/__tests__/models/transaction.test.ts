@@ -1,14 +1,9 @@
-import { describe, it, expect, afterEach } from 'vitest';
-import { PrismaClient, TransactionType } from '@prisma/client';
-import { createAccountWithCharacter, cleanupTestData } from '../helpers/factories';
-
-const prisma = new PrismaClient();
+import { describe, it, expect } from 'vitest';
+import { TransactionType } from '@prisma/client';
+import { prisma } from '@/lib/prisma';
+import { createAccountWithCharacter } from '../helpers/factories';
 
 describe('Transaction Model CRUD', () => {
-  afterEach(async () => {
-    await cleanupTestData();
-  });
-
   it('should create a deposit transaction', async () => {
     const { character } = await createAccountWithCharacter();
 

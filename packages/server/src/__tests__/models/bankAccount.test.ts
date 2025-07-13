@@ -1,14 +1,8 @@
-import { describe, it, expect, afterEach } from 'vitest';
-import { PrismaClient } from '@prisma/client';
-import { createCharacterWithBankAccount, cleanupTestData } from '../helpers/factories';
-
-const prisma = new PrismaClient();
+import { describe, it, expect } from 'vitest';
+import { prisma } from '@/lib/prisma';
+import { createCharacterWithBankAccount } from '../helpers/factories';
 
 describe('BankAccount Model CRUD', () => {
-  afterEach(async () => {
-    await cleanupTestData();
-  });
-
   it('should create a bank account', async () => {
     const { character } = await createCharacterWithBankAccount({
       bankAccount: { balance: 5000 },
