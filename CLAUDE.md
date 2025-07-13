@@ -1,8 +1,11 @@
 # Project Repository Management
 
 ## Repository Structure
+
 This project uses two separate repositories:
-1. **Documentation Repository**: https://github.com/Aeturnia/aeturnis-master-docs
+
+1. **Documentation Repository**:
+   https://github.com/Aeturnia/aeturnis-master-docs
    - Contains only the `/docs` folder
    - Used for all documentation, guides, SOPs, and reports
    - Previous repo: https://github.com/Aeturnia/aeturnis-alpha-sop (deprecated)
@@ -14,22 +17,25 @@ This project uses two separate repositories:
    - Separate from documentation for cleaner organization
    - Will use monorepo structure with Yarn workspaces
 
-## Current Project Status (July 12, 2025)
+## Current Project Status (July 13, 2025)
 
 ### Architecture Decisions
+
 - **Versions**: Server v1.0.0, Client v1.0.0
-- **Monorepo**: Yarn workspaces with packages/server, packages/client, packages/shared
-- **CI**: GitHub Actions (yarn lint, test, build)
-- **Database**: Prisma for DB layer & migrations
-- **Testing**: Vitest for unit tests
+- **Monorepo**: pnpm workspaces with packages/server, packages/client,
+  packages/shared
+- **CI**: GitHub Actions with Codecov integration (pnpm lint, test, build)
+- **Database**: Prisma for DB layer & migrations (PostgreSQL)
+- **Testing**: Vitest for unit tests (90%+ coverage mandatory)
 - **Code Quality**: ESLint + Prettier (repo-local preset)
-- **Package Manager**: Yarn (NEVER npm)
+- **Package Manager**: pnpm (migrated from Yarn 4)
 
 ### Documentation Structure
+
 ```
 docs/
 ├── api/                    # API documentation
-├── audit-reports/          # Code audit reports  
+├── audit-reports/          # Code audit reports
 ├── bugfix-reports/         # Bug fix documentation
 ├── guides/                 # Templates and guides
 ├── implementation-reports/ # Feature implementation reports
@@ -46,17 +52,20 @@ docs/
 ```
 
 ### Key Files
+
 - **Implementation Plan**: docs/phases/aeturnis-implementation-plan.md (v5.0)
 - **Game Design**: docs/misc/aeturnis-game-design-v4.md (aligned version)
 - **Prompt Tracker**: docs/prompts/aeturnis-prompt-tracker.md
 - **DDERF Issues**: docs/methodology/DDERF-Issues.md (v0.1.0)
 
 ### Agent Roles (CAFE v2.0 Division Protocol)
+
 - **Claude Code**: Backend Specialist (DB, APIs, services, security)
 - **Replit Agent**: Frontend Specialist (UI/UX, React, client state)
 - **ChatGPT**: Dev Support (architecture, code review, documentation)
 
 ### Development Workflow
+
 1. Use catalog tags: [P{phase}-S{step}-{substep}]
 2. TODO comments: // TODO(claude), // TODO(replit), // TODO(chatgpt)
 3. All features need Implementation Reports
@@ -64,21 +73,48 @@ docs/
 5. Update prompt tracker for each feature
 
 ### Critical Game Mechanics
+
 - **Death Penalty**: Lose ALL unbanked gold + 20% XP
 - **Banking**: Essential from day 1 (stub for testing)
 - **PK System**: 10-min cooldown, 6 kills/hour max
 - **Chat**: 4 mandatory channels with trade enforcement
 - **Alignment**: -1000 to +1000 (visual colors)
 
-### Next Steps (Approved)
-1. Monorepo bootstrap with Yarn workspaces
-2. GitHub Actions CI setup
-3. Initial DB schema (Prisma)
-4. Banking service stub
-5. PK cooldown helper (Redis + Postgres)
-6. Pre-commit doc hooks
+### Implementation Progress
+
+#### ✅ Completed (2025-07-13)
+
+1. **Monorepo Bootstrap** ([P1-S1-5])
+   - pnpm workspace configuration implemented
+   - TypeScript, ESLint, Prettier configured
+   - Packages created: server, client, shared
+   - Git commits: `fee192a` (initial), `1b3d3a9` (coverage), `626b29c` (fixes)
+   - CI/CD pipeline fully functional
+
+2. **GitHub Actions CI** ([P1-S1-2])
+   - Complete pipeline with PostgreSQL service
+   - Codecov integration added
+   - All checks passing
+
+3. **Initial DB Schema** ([P1-S1-3])
+   - Prisma schema with 6 models implemented
+   - Seed script created
+   - 91.66% test coverage achieved
+
+4. **Test Coverage Enhancement**
+   - Vitest configured with 90%+ thresholds
+   - All packages meet coverage requirements
+   - Mandatory testing policy established
+
+#### 📋 Next Steps
+
+5. Banking service implementation
+6. PK cooldown helper (Redis + Postgres)
+7. Authentication service
+8. Character creation endpoints
 
 ### Prisma Directory Structure
+
 ```
 packages/server/
 ├── src/
@@ -96,17 +132,20 @@ packages/server/
 When pushing documentation updates to the docs repository:
 
 1. **Add remote if not exists**:
+
    ```bash
    git remote add master-docs https://github.com/Aeturnia/aeturnis-master-docs.git
    ```
 
 2. **Enable sparse checkout**:
+
    ```bash
    git config core.sparseCheckout true
    echo "docs/*" > .git/info/sparse-checkout
    ```
 
 3. **Stage and commit docs**:
+
    ```bash
    git add docs/
    git commit -m "Update documentation"
@@ -117,4 +156,5 @@ When pushing documentation updates to the docs repository:
    git push master-docs new-docs
    ```
 
-This ensures only the `/docs` folder is tracked and pushed to the documentation repository, keeping code and documentation separate.
+This ensures only the `/docs` folder is tracked and pushed to the documentation
+repository, keeping code and documentation separate.

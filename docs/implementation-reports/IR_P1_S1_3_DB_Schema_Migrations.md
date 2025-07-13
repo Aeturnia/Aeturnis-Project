@@ -135,6 +135,9 @@ cd packages/server
 pnpm prisma:generate
 pnpm lint
 pnpm typecheck
+pnpm test
+pnpm test:coverage
+pnpm build
 ```
 
 ## 9. Test Coverage Update
@@ -163,5 +166,23 @@ pnpm typecheck
   - Branches: 80%
   - Functions: 85%
   - Lines: 90%
+
+### Build Configuration Updates
+
+- Created `tsconfig.eslint.json` files for each package to handle test files
+- Excluded test files from TypeScript build compilation
+- Fixed ESLint configuration to properly parse test files
+- All packages now build successfully with `pnpm build`
+- Lint passes without errors using `pnpm lint`
+
+### Testing Policy
+
+As per project standards, comprehensive testing with Vitest is now **mandatory**
+after every implementation step. All new features must include:
+
+- Unit tests with minimum 90% line coverage
+- Integration tests where applicable
+- Test files committed with implementation code
+- Coverage reports in implementation reports
 
 All packages now meet or exceed the required coverage thresholds.
