@@ -23,12 +23,12 @@ Quality Checks, Prompt Used, and Notes.
 
 ### Core Game Systems (Pending)
 
-| Catalog Tag | Feature Name         | Date | Agent | Status         | Server Ver | Client Ver | CI         | Audit          | Bug Fixes | Prompt Used | Notes |
-| ----------- | -------------------- | ---- | ----- | -------------- | ---------- | ---------- | ---------- | -------------- | --------- | ----------- | ----- |
-| [P1-S1-1]   | Core Architecture    | -    | -     | ❌ Not Started | -          | -          | ❌ Not Run | ❌ Not Audited | None      | -           | -     |
-| [P1-S1-2]   | Security & Auth      | -    | -     | ❌ Not Started | -          | -          | ❌ Not Run | ❌ Not Audited | None      | -           | -     |
-| [P1-S1-3]   | Monitoring & Logging | -    | -     | ❌ Not Started | -          | -          | ❌ Not Run | ❌ Not Audited | None      | -           | -     |
-| [P1-S1-4]   | Cache & Performance  | -    | -     | ❌ Not Started | -          | -          | ❌ Not Run | ❌ Not Audited | None      | -           | -     |
+| Catalog Tag | Feature Name         | Date       | Agent       | Status         | Server Ver | Client Ver | CI         | Audit                 | Bug Fixes                           | Prompt Used                         | Notes                                                                                                         |
+| ----------- | -------------------- | ---------- | ----------- | -------------- | ---------- | ---------- | ---------- | --------------------- | ----------------------------------- | ----------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| [P1-S1-1]   | Core Architecture    | 2025-07-13 | Claude Code | ✅ Implemented | v1.0.0     | v1.0.0     | ⚠️ Failed  | ✅ Audited & Resolved | DDERF tracking for remaining issues | P1_S1_1_Core_Architecture_Prompt.md | Service-oriented architecture with Express, event bus, type definitions. CI failing due to test coverage drop |
+| [P1-S1-2]   | Security & Auth      | -          | -           | ❌ Not Started | -          | -          | ❌ Not Run | ❌ Not Audited        | None                                | -                                   | -                                                                                                             |
+| [P1-S1-3]   | Monitoring & Logging | -          | -           | ❌ Not Started | -          | -          | ❌ Not Run | ❌ Not Audited        | None                                | -                                   | -                                                                                                             |
+| [P1-S1-4]   | Cache & Performance  | -          | -           | ❌ Not Started | -          | -          | ❌ Not Run | ❌ Not Audited        | None                                | -                                   | -                                                                                                             |
 
 ### Player Management Systems (Pending)
 
@@ -149,23 +149,23 @@ _[Tables for Phase 4 systems will be added as they are planned and implemented]_
 
 ### Phase 1 Progress
 
-| Metric                 | Count | Percentage          |
-| ---------------------- | ----- | ------------------- |
-| **Total Systems**      | 32    | 100%                |
-| **Not Started**        | 28    | 87.5%               |
-| **In Progress**        | 0     | 0%                  |
-| **Implemented**        | 4     | 12.5%               |
-| **Deployed**           | 0     | 0%                  |
-| **CI Passed**          | 4     | 100% of implemented |
-| **Audited & Resolved** | 3     | 75% of implemented  |
+| Metric                 | Count | Percentage         |
+| ---------------------- | ----- | ------------------ |
+| **Total Systems**      | 32    | 100%               |
+| **Not Started**        | 27    | 84.4%              |
+| **In Progress**        | 0     | 0%                 |
+| **Implemented**        | 5     | 15.6%              |
+| **Deployed**           | 0     | 0%                 |
+| **CI Passed**          | 4     | 80% of implemented |
+| **Audited & Resolved** | 4     | 80% of implemented |
 
 ### Implementation Quality Metrics
 
 | Quality Check     | Passed         | Failed | Not Run |
 | ----------------- | -------------- | ------ | ------- |
-| **CI Checks**     | 4              | 0      | 28      |
-| **Audit Reviews** | 3              | 0      | 29      |
-| **Test Coverage** | 4 (91.66% avg) | 0      | 28      |
+| **CI Checks**     | 4              | 1      | 27      |
+| **Audit Reviews** | 4              | 0      | 28      |
+| **Test Coverage** | 4 (91.66% avg) | 1      | 27      |
 
 ### Current Status
 

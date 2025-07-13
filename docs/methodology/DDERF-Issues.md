@@ -232,7 +232,7 @@ placeholders to restore coverage above 90%.
 - **Catalog Tag**: N/A
 - **Error Type**: TYPE-E (External Integration Failures)
 - **Severity**: High
-- **Status**: Open
+- **Status**: Resolved
 
 #### 1. Detect
 
@@ -255,7 +255,17 @@ Add @faker-js/faker to devDependencies in packages/server/package.json
 
 #### 5. Fix
 
-[Pending implementation]
+Executed command:
+
+```bash
+pnpm add -D @faker-js/faker -w
+```
+
+Successfully installed @faker-js/faker v9.3.0 as a devDependency in the
+workspace root.
+
+**Resolution Date**: 2025-07-13  
+**Fixed in Version**: Server v1.0.0
 
 ### [DDERF-008] Test Data Race Conditions
 
@@ -387,6 +397,12 @@ tests ran after architecture changes.
 - **Severity**: Medium
 - **Fix**: Implemented Express server with health endpoints
 
+### [DDERF-007] Missing @faker-js/faker Dependency
+
+- **Resolved**: 2025-07-13
+- **Severity**: High
+- **Fix**: Installed @faker-js/faker v9.3.0 as workspace devDependency
+
 ---
 
 ## Issue Type Categories
@@ -410,11 +426,11 @@ Per DDERF methodology:
 ## Statistics
 
 - Total Issues: 8
-- Open: 5 (DDERF-002, DDERF-004, DDERF-005, DDERF-007, DDERF-008)
+- Open: 4 (DDERF-002, DDERF-004, DDERF-005, DDERF-008)
 - Partially Resolved: 1 (DDERF-006)
-- Resolved: 2 (DDERF-001, DDERF-003)
+- Resolved: 3 (DDERF-001, DDERF-003, DDERF-007)
 - Critical: 0
-- High: 3 (DDERF-004, DDERF-006, DDERF-007)
+- High: 2 (DDERF-004, DDERF-006)
 - Medium: 3 (DDERF-002, DDERF-005, DDERF-008)
 - Low: 0
 
