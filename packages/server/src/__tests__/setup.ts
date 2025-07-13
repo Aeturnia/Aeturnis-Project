@@ -2,11 +2,13 @@ import { beforeAll, afterAll, afterEach } from 'vitest';
 import { PrismaClient } from '@prisma/client';
 import * as dotenv from 'dotenv';
 import { resolve } from 'path';
+import { TestTransactionWrapper } from './helpers/testTransaction';
 
 // Load .env file from root directory
 dotenv.config({ path: resolve(__dirname, '../../../.env') });
 
 const prisma = new PrismaClient();
+export const testTransactionWrapper = new TestTransactionWrapper(prisma);
 
 beforeAll(async () => {
   // Ensure we have a database URL
@@ -21,7 +23,10 @@ beforeAll(async () => {
 });
 
 afterEach(async () => {
-  // Clean up test data after each test
+  // Clean up any active transactions first
+  await testTransactionWrapper.cleanup();
+
+  // Then clean up test data after each test
   // Order matters due to foreign key constraints
   await prisma.pkKillLog.deleteMany();
   await prisma.xpLedger.deleteMany();
@@ -32,5 +37,7 @@ afterEach(async () => {
 });
 
 afterAll(async () => {
+  // Clean up any remaining transactions
+  await testTransactionWrapper.cleanup();
   await prisma.$disconnect();
 });

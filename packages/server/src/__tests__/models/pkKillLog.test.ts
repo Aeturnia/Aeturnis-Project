@@ -46,9 +46,8 @@ describe('PkKillLog Model CRUD', () => {
 
   it('should find kills by killer', async () => {
     const { attacker } = await createPkKillLog();
-    const { victim: victim2 } = await createPkKillLog({
-      attacker: { name: attacker.character.name },
-    });
+    // Create a second victim instead of trying to reuse attacker
+    const { victim: victim2 } = await createPkKillLog();
 
     await prisma.pkKillLog.create({
       data: {
@@ -67,9 +66,8 @@ describe('PkKillLog Model CRUD', () => {
 
   it('should find deaths by victim', async () => {
     const { victim } = await createPkKillLog();
-    const { attacker: killer2 } = await createPkKillLog({
-      victim: { name: victim.character.name },
-    });
+    // Create a second attacker instead of trying to reuse victim
+    const { attacker: killer2 } = await createPkKillLog();
 
     await prisma.pkKillLog.create({
       data: {

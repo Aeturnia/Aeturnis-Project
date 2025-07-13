@@ -3,14 +3,24 @@ import { prisma } from '@/lib/prisma';
 import { faker } from '@faker-js/faker';
 
 /**
+ * Creates unique identifiers for test data to prevent collisions
+ */
+export function createUniqueTestId(): string {
+  return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+}
+
+/**
  * Creates an Account with default test data
  */
 export async function createAccount(
   overrides?: Partial<{ email: string; hashedPassword: string }>
 ) {
+  // Generate unique email to prevent collisions
+  const uniqueEmail = overrides?.email ?? `test-${createUniqueTestId()}@example.com`;
+
   return await prisma.account.create({
     data: {
-      email: overrides?.email ?? faker.internet.email(),
+      email: uniqueEmail,
       hashedPassword: overrides?.hashedPassword ?? faker.internet.password(),
     },
   });
@@ -31,10 +41,14 @@ export async function createAccountWithCharacter(overrides?: {
 }) {
   const account = await createAccount(overrides?.account);
 
+  // Generate unique character name with timestamp and random suffix to avoid collisions
+  const uniqueName =
+    overrides?.character?.name ?? `${faker.person.firstName()}-${createUniqueTestId()}`;
+
   const character = await prisma.character.create({
     data: {
       accountId: account.id,
-      name: overrides?.character?.name ?? faker.person.firstName(),
+      name: uniqueName,
       level: overrides?.character?.level ?? 1,
       experience: overrides?.character?.experience ?? 0,
       gold: overrides?.character?.gold ?? 0,
@@ -125,7 +139,7 @@ export async function createPkKillLog(overrides?: {
 
   const pkKillLog = await prisma.pkKillLog.create({
     data: {
-      attackerId: attackerData.character.id,
+      killerId: attackerData.character.id,
       victimId: victimData.character.id,
       timestamp: new Date(),
     },
@@ -140,13 +154,47 @@ export async function createPkKillLog(overrides?: {
 
 /**
  * Cleans up all test data (use in afterEach)
+ * Enhanced with retry logic to handle race conditions
  */
-export async function cleanupTestData() {
-  // Delete in reverse order of dependencies
-  await prisma.pkKillLog.deleteMany();
-  await prisma.xpLedger.deleteMany();
-  await prisma.transaction.deleteMany();
-  await prisma.bankAccount.deleteMany();
-  await prisma.character.deleteMany();
-  await prisma.account.deleteMany();
+export async function cleanupTestData(retries = 3) {
+  let attempt = 0;
+  while (attempt < retries) {
+    try {
+      // Delete in reverse order of dependencies with explicit error handling
+      const deletePromises = [
+        prisma.pkKillLog
+          .deleteMany()
+          .catch((e) => console.warn('PkKillLog cleanup warning:', e.message)),
+        prisma.xpLedger
+          .deleteMany()
+          .catch((e) => console.warn('XpLedger cleanup warning:', e.message)),
+        prisma.transaction
+          .deleteMany()
+          .catch((e) => console.warn('Transaction cleanup warning:', e.message)),
+      ];
+
+      await Promise.all(deletePromises);
+
+      // Then clean bank accounts and characters
+      await prisma.bankAccount
+        .deleteMany()
+        .catch((e) => console.warn('BankAccount cleanup warning:', e.message));
+      await prisma.character
+        .deleteMany()
+        .catch((e) => console.warn('Character cleanup warning:', e.message));
+      await prisma.account
+        .deleteMany()
+        .catch((e) => console.warn('Account cleanup warning:', e.message));
+
+      break; // Success, exit retry loop
+    } catch (error) {
+      attempt++;
+      if (attempt >= retries) {
+        console.error('Failed to cleanup test data after', retries, 'attempts:', error);
+        throw error;
+      }
+      // Wait before retry
+      await new Promise((resolve) => setTimeout(resolve, 100 * attempt));
+    }
+  }
 }

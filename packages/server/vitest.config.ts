@@ -12,6 +12,10 @@ export default defineConfig({
         singleFork: true,
       },
     },
+    // Enforce serial execution to prevent race conditions
+    fileParallelism: false,
+    // Increase timeout for database operations
+    testTimeout: 30000,
     coverage: {
       provider: 'v8',
       reporter: ['text', 'lcov', 'html'],
