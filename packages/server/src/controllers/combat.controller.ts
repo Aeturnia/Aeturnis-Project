@@ -1,12 +1,14 @@
 import { Request, Response } from 'express';
 import { CombatService } from '../services/combat.service';
 import { HTTP_STATUS, MESSAGES } from '../utils/constants';
+import { Container } from '../container';
 
 export class CombatController {
   private combatService: CombatService;
 
   constructor() {
-    this.combatService = new CombatService();
+    const container = Container.getInstance();
+    this.combatService = container.getCombatService();
   }
 
   // POST /api/combat/death/:characterId

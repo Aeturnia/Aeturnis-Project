@@ -5,6 +5,7 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import { GAME_VERSION } from '@aeturnis/shared';
 import { HTTP_STATUS } from './utils/constants';
+import { errorHandler, errorLogger, notFoundHandler, defaultRateLimiter } from './middleware';
 
 // Create Express application
 const app = express();
@@ -19,6 +20,9 @@ app.use(cors()); // CORS configuration
 app.use(express.json()); // JSON body parser
 app.use(express.urlencoded({ extended: true })); // URL-encoded body parser
 app.use(morgan('combined')); // Request logging
+
+// Apply default rate limiting to all routes
+app.use(defaultRateLimiter);
 
 // Health check endpoint
 app.get('/health', (_req, res) => {
@@ -45,28 +49,24 @@ app.get('/api/v1', (_req, res) => {
   });
 });
 
-// TODO(claude): Set up API route routers
+// Import routers
+import authRouter from './routes/auth.router';
+
+// Mount API routers
+app.use('/api/v1/auth', authRouter);
+
+// TODO(claude): Mount additional routers (character, banking, combat, pk)
 // TODO(claude): Initialize WebSocket server for real-time updates
 // TODO(claude): Set up Prisma database connection
 
+// Error logging middleware (development only)
+app.use(errorLogger);
+
 // Global error handler
-app.use((err: Error, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
-  // eslint-disable-next-line no-console
-  console.error('Global error handler:', err);
+app.use(errorHandler);
 
-  res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
-    success: false,
-    error: process.env['NODE_ENV'] === 'production' ? 'Internal server error' : err.message,
-  });
-});
-
-// 404 handler
-app.use((_req, res) => {
-  res.status(HTTP_STATUS.NOT_FOUND).json({
-    success: false,
-    error: 'Route not found',
-  });
-});
+// 404 handler (must be last)
+app.use(notFoundHandler);
 
 // Start server
 if (process.env['NODE_ENV'] !== 'test') {

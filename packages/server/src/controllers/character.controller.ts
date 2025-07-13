@@ -1,12 +1,14 @@
 import { Request, Response } from 'express';
 import { CharacterService } from '../services/character.service';
 import { HTTP_STATUS, MESSAGES } from '../utils/constants';
+import { Container } from '../container';
 
 export class CharacterController {
   private characterService: CharacterService;
 
   constructor() {
-    this.characterService = new CharacterService();
+    const container = Container.getInstance();
+    this.characterService = container.getCharacterService();
   }
 
   // GET /api/characters

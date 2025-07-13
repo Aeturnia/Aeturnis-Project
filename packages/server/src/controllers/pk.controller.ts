@@ -1,12 +1,14 @@
 import { Request, Response } from 'express';
 import { PKService } from '../services/pk.service';
 import { HTTP_STATUS, MESSAGES } from '../utils/constants';
+import { Container } from '../container';
 
 export class PKController {
   private pkService: PKService;
 
   constructor() {
-    this.pkService = new PKService();
+    const container = Container.getInstance();
+    this.pkService = container.getPkService();
   }
 
   // POST /api/pk/kill

@@ -1,12 +1,14 @@
 import { Request, Response } from 'express';
 import { BankingService } from '../services/banking.service';
 import { HTTP_STATUS, MESSAGES } from '../utils/constants';
+import { Container } from '../container';
 
 export class BankingController {
   private bankingService: BankingService;
 
   constructor() {
-    this.bankingService = new BankingService();
+    const container = Container.getInstance();
+    this.bankingService = container.getBankingService();
   }
 
   // GET /api/banking/balance/:characterId

@@ -1,12 +1,14 @@
 import { Request, Response } from 'express';
 import { AuthService } from '../services/auth.service';
 import { HTTP_STATUS, MESSAGES } from '../utils/constants';
+import { Container } from '../container';
 
 export class AuthController {
   private authService: AuthService;
 
   constructor() {
-    this.authService = new AuthService();
+    const container = Container.getInstance();
+    this.authService = container.getAuthService();
   }
 
   // POST /api/auth/register

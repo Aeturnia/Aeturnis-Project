@@ -1,0 +1,534 @@
+{
+  "numTotalTestSuites": 21,
+  "numPassedTestSuites": 21,
+  "numFailedTestSuites": 0,
+  "numPendingTestSuites": 0,
+  "numTotalTests": 54,
+  "numPassedTests": 52,
+  "numFailedTests": 2,
+  "numPendingTests": 0,
+  "numTodoTests": 0,
+  "startTime": 1752425692801,
+  "success": false,
+  "testResults": [
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": ["", "Server Entry Point"],
+          "fullName": " Server Entry Point should be defined",
+          "status": "passed",
+          "title": "should be defined",
+          "duration": 630,
+          "failureMessages": []
+        },
+        {
+          "ancestorTitles": ["", "Server Entry Point"],
+          "fullName": " Server Entry Point should log server startup message",
+          "status": "passed",
+          "title": "should log server startup message",
+          "duration": 479,
+          "failureMessages": []
+        },
+        {
+          "ancestorTitles": ["", "Server Entry Point"],
+          "fullName": " Server Entry Point should import GAME_VERSION from shared module",
+          "status": "passed",
+          "title": "should import GAME_VERSION from shared module",
+          "duration": 206,
+          "failureMessages": []
+        },
+        {
+          "ancestorTitles": ["", "Server Entry Point"],
+          "fullName": " Server Entry Point should handle multiple imports without duplicate logs",
+          "status": "passed",
+          "title": "should handle multiple imports without duplicate logs",
+          "duration": 220,
+          "failureMessages": []
+        }
+      ],
+      "startTime": 1752425729565,
+      "endTime": 1752425731100,
+      "status": "passed",
+      "message": "",
+      "name": "/home/runner/workspace/packages/server/src/index.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": ["", "Prisma Client"],
+          "fullName": " Prisma Client should export prisma client",
+          "status": "passed",
+          "title": "should export prisma client",
+          "duration": 679,
+          "failureMessages": []
+        },
+        {
+          "ancestorTitles": ["", "Prisma Client"],
+          "fullName": " Prisma Client should create singleton in development",
+          "status": "passed",
+          "title": "should create singleton in development",
+          "duration": 232,
+          "failureMessages": []
+        },
+        {
+          "ancestorTitles": ["", "Prisma Client"],
+          "fullName": " Prisma Client should not create global instance in production",
+          "status": "passed",
+          "title": "should not create global instance in production",
+          "duration": 228,
+          "failureMessages": []
+        }
+      ],
+      "startTime": 1752425728391,
+      "endTime": 1752425729530,
+      "status": "passed",
+      "message": "",
+      "name": "/home/runner/workspace/packages/server/src/__tests__/lib/prisma.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": ["", "Validation Middleware", "validate"],
+          "fullName": " Validation Middleware validate should pass validation with valid data",
+          "status": "passed",
+          "title": "should pass validation with valid data",
+          "duration": 712,
+          "failureMessages": []
+        },
+        {
+          "ancestorTitles": ["", "Validation Middleware", "validate"],
+          "fullName": " Validation Middleware validate should fail validation with invalid data",
+          "status": "passed",
+          "title": "should fail validation with invalid data",
+          "duration": 233,
+          "failureMessages": []
+        },
+        {
+          "ancestorTitles": ["", "Validation Middleware", "validate"],
+          "fullName": " Validation Middleware validate should validate query parameters",
+          "status": "passed",
+          "title": "should validate query parameters",
+          "duration": 239,
+          "failureMessages": []
+        },
+        {
+          "ancestorTitles": ["", "Validation Middleware", "validateMultiple"],
+          "fullName": " Validation Middleware validateMultiple should validate multiple targets",
+          "status": "passed",
+          "title": "should validate multiple targets",
+          "duration": 226,
+          "failureMessages": []
+        },
+        {
+          "ancestorTitles": ["", "Validation Middleware", "validateMultiple"],
+          "fullName": " Validation Middleware validateMultiple should collect errors from multiple targets",
+          "status": "passed",
+          "title": "should collect errors from multiple targets",
+          "duration": 229,
+          "failureMessages": []
+        },
+        {
+          "ancestorTitles": ["", "Validation Middleware", "strictSchema"],
+          "fullName": " Validation Middleware strictSchema should create a strict schema that rejects extra properties",
+          "status": "passed",
+          "title": "should create a strict schema that rejects extra properties",
+          "duration": 226,
+          "failureMessages": []
+        }
+      ],
+      "startTime": 1752425717514,
+      "endTime": 1752425719380,
+      "status": "passed",
+      "message": "",
+      "name": "/home/runner/workspace/packages/server/src/__tests__/middleware/validation.middleware.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": ["", "Account Model CRUD"],
+          "fullName": " Account Model CRUD should create an account",
+          "status": "passed",
+          "title": "should create an account",
+          "duration": 1704,
+          "failureMessages": []
+        },
+        {
+          "ancestorTitles": ["", "Account Model CRUD"],
+          "fullName": " Account Model CRUD should read an account by id",
+          "status": "passed",
+          "title": "should read an account by id",
+          "duration": 546,
+          "failureMessages": []
+        },
+        {
+          "ancestorTitles": ["", "Account Model CRUD"],
+          "fullName": " Account Model CRUD should update an account",
+          "status": "passed",
+          "title": "should update an account",
+          "duration": 392,
+          "failureMessages": []
+        },
+        {
+          "ancestorTitles": ["", "Account Model CRUD"],
+          "fullName": " Account Model CRUD should delete an account",
+          "status": "passed",
+          "title": "should delete an account",
+          "duration": 397,
+          "failureMessages": []
+        },
+        {
+          "ancestorTitles": ["", "Account Model CRUD"],
+          "fullName": " Account Model CRUD should enforce unique email constraint",
+          "status": "passed",
+          "title": "should enforce unique email constraint",
+          "duration": 334,
+          "failureMessages": []
+        },
+        {
+          "ancestorTitles": ["", "Account Model CRUD"],
+          "fullName": " Account Model CRUD should find accounts by email",
+          "status": "passed",
+          "title": "should find accounts by email",
+          "duration": 356,
+          "failureMessages": []
+        }
+      ],
+      "startTime": 1752425724630,
+      "endTime": 1752425728359,
+      "status": "passed",
+      "message": "",
+      "name": "/home/runner/workspace/packages/server/src/__tests__/models/account.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": ["", "BankAccount Model CRUD"],
+          "fullName": " BankAccount Model CRUD should create a bank account",
+          "status": "passed",
+          "title": "should create a bank account",
+          "duration": 1358,
+          "failureMessages": []
+        },
+        {
+          "ancestorTitles": ["", "BankAccount Model CRUD"],
+          "fullName": " BankAccount Model CRUD should read bank account with character",
+          "status": "passed",
+          "title": "should read bank account with character",
+          "duration": 689,
+          "failureMessages": []
+        },
+        {
+          "ancestorTitles": ["", "BankAccount Model CRUD"],
+          "fullName": " BankAccount Model CRUD should update bank balance",
+          "status": "passed",
+          "title": "should update bank balance",
+          "duration": 621,
+          "failureMessages": []
+        },
+        {
+          "ancestorTitles": ["", "BankAccount Model CRUD"],
+          "fullName": " BankAccount Model CRUD should enforce one bank account per character",
+          "status": "passed",
+          "title": "should enforce one bank account per character",
+          "duration": 624,
+          "failureMessages": []
+        },
+        {
+          "ancestorTitles": ["", "BankAccount Model CRUD"],
+          "fullName": " BankAccount Model CRUD should delete bank account",
+          "status": "passed",
+          "title": "should delete bank account",
+          "duration": 660,
+          "failureMessages": []
+        },
+        {
+          "ancestorTitles": ["", "BankAccount Model CRUD"],
+          "fullName": " BankAccount Model CRUD should find bank account by character",
+          "status": "passed",
+          "title": "should find bank account by character",
+          "duration": 587,
+          "failureMessages": []
+        },
+        {
+          "ancestorTitles": ["", "BankAccount Model CRUD"],
+          "fullName": " BankAccount Model CRUD should handle large balances",
+          "status": "passed",
+          "title": "should handle large balances",
+          "duration": 619,
+          "failureMessages": []
+        }
+      ],
+      "startTime": 1752425719421,
+      "endTime": 1752425724579,
+      "status": "passed",
+      "message": "",
+      "name": "/home/runner/workspace/packages/server/src/__tests__/models/bankAccount.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": ["", "Character Model CRUD"],
+          "fullName": " Character Model CRUD should create a character",
+          "status": "passed",
+          "title": "should create a character",
+          "duration": 1656,
+          "failureMessages": []
+        },
+        {
+          "ancestorTitles": ["", "Character Model CRUD"],
+          "fullName": " Character Model CRUD should read a character with relations",
+          "status": "passed",
+          "title": "should read a character with relations",
+          "duration": 927,
+          "failureMessages": []
+        },
+        {
+          "ancestorTitles": ["", "Character Model CRUD"],
+          "fullName": " Character Model CRUD should update character stats",
+          "status": "passed",
+          "title": "should update character stats",
+          "duration": 794,
+          "failureMessages": []
+        },
+        {
+          "ancestorTitles": ["", "Character Model CRUD"],
+          "fullName": " Character Model CRUD should soft delete a character",
+          "status": "passed",
+          "title": "should soft delete a character",
+          "duration": 789,
+          "failureMessages": []
+        },
+        {
+          "ancestorTitles": ["", "Character Model CRUD"],
+          "fullName": " Character Model CRUD should enforce unique character name",
+          "status": "passed",
+          "title": "should enforce unique character name",
+          "duration": 755,
+          "failureMessages": []
+        },
+        {
+          "ancestorTitles": ["", "Character Model CRUD"],
+          "fullName": " Character Model CRUD should find characters by account",
+          "status": "passed",
+          "title": "should find characters by account",
+          "duration": 896,
+          "failureMessages": []
+        },
+        {
+          "ancestorTitles": ["", "Character Model CRUD"],
+          "fullName": " Character Model CRUD should enforce alignment bounds",
+          "status": "passed",
+          "title": "should enforce alignment bounds",
+          "duration": 799,
+          "failureMessages": []
+        }
+      ],
+      "startTime": 1752425710845,
+      "endTime": 1752425717461,
+      "status": "passed",
+      "message": "",
+      "name": "/home/runner/workspace/packages/server/src/__tests__/models/character.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": ["", "PkKillLog Model CRUD"],
+          "fullName": " PkKillLog Model CRUD should create a PK kill log",
+          "status": "passed",
+          "title": "should create a PK kill log",
+          "duration": 1919,
+          "failureMessages": []
+        },
+        {
+          "ancestorTitles": ["", "PkKillLog Model CRUD"],
+          "fullName": " PkKillLog Model CRUD should read PK log with killer and victim",
+          "status": "passed",
+          "title": "should read PK log with killer and victim",
+          "duration": 785,
+          "failureMessages": []
+        },
+        {
+          "ancestorTitles": ["", "PkKillLog Model CRUD"],
+          "fullName": " PkKillLog Model CRUD should find kills by killer",
+          "status": "failed",
+          "title": "should find kills by killer",
+          "duration": 700,
+          "failureMessages": [
+            "\nInvalid `prisma.character.create()` invocation in\n/home/runner/workspace/packages/server/src/__tests__/helpers/factories.ts:34:44\n\n  31 }) {\n  32   const account = await createAccount(overrides?.account);\n  33 \n→ 34   const character = await prisma.character.create(\nUnique constraint failed on the fields: (`name`)"
+          ],
+          "location": { "line": 121, "column": 7315 }
+        },
+        {
+          "ancestorTitles": ["", "PkKillLog Model CRUD"],
+          "fullName": " PkKillLog Model CRUD should find deaths by victim",
+          "status": "failed",
+          "title": "should find deaths by victim",
+          "duration": 770,
+          "failureMessages": [
+            "\nInvalid `prisma.character.create()` invocation in\n/home/runner/workspace/packages/server/src/__tests__/helpers/factories.ts:34:44\n\n  31 }) {\n  32   const account = await createAccount(overrides?.account);\n  33 \n→ 34   const character = await prisma.character.create(\nUnique constraint failed on the fields: (`name`)"
+          ],
+          "location": { "line": 121, "column": 7315 }
+        },
+        {
+          "ancestorTitles": ["", "PkKillLog Model CRUD"],
+          "fullName": " PkKillLog Model CRUD should find recent kills for cooldown check",
+          "status": "passed",
+          "title": "should find recent kills for cooldown check",
+          "duration": 821,
+          "failureMessages": []
+        },
+        {
+          "ancestorTitles": ["", "PkKillLog Model CRUD"],
+          "fullName": " PkKillLog Model CRUD should track kills by zone",
+          "status": "passed",
+          "title": "should track kills by zone",
+          "duration": 818,
+          "failureMessages": []
+        },
+        {
+          "ancestorTitles": ["", "PkKillLog Model CRUD"],
+          "fullName": " PkKillLog Model CRUD should order kills by timestamp",
+          "status": "passed",
+          "title": "should order kills by timestamp",
+          "duration": 749,
+          "failureMessages": []
+        }
+      ],
+      "startTime": 1752425693559,
+      "endTime": 1752425700122,
+      "status": "failed",
+      "message": "",
+      "name": "/home/runner/workspace/packages/server/src/__tests__/models/pkKillLog.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": ["", "Transaction Model CRUD"],
+          "fullName": " Transaction Model CRUD should create a deposit transaction",
+          "status": "passed",
+          "title": "should create a deposit transaction",
+          "duration": 1261,
+          "failureMessages": []
+        },
+        {
+          "ancestorTitles": ["", "Transaction Model CRUD"],
+          "fullName": " Transaction Model CRUD should create a withdrawal transaction",
+          "status": "passed",
+          "title": "should create a withdrawal transaction",
+          "duration": 544,
+          "failureMessages": []
+        },
+        {
+          "ancestorTitles": ["", "Transaction Model CRUD"],
+          "fullName": " Transaction Model CRUD should create a death penalty transaction",
+          "status": "passed",
+          "title": "should create a death penalty transaction",
+          "duration": 539,
+          "failureMessages": []
+        },
+        {
+          "ancestorTitles": ["", "Transaction Model CRUD"],
+          "fullName": " Transaction Model CRUD should read transactions with character",
+          "status": "passed",
+          "title": "should read transactions with character",
+          "duration": 676,
+          "failureMessages": []
+        },
+        {
+          "ancestorTitles": ["", "Transaction Model CRUD"],
+          "fullName": " Transaction Model CRUD should find all transactions for a character",
+          "status": "passed",
+          "title": "should find all transactions for a character",
+          "duration": 727,
+          "failureMessages": []
+        },
+        {
+          "ancestorTitles": ["", "Transaction Model CRUD"],
+          "fullName": " Transaction Model CRUD should calculate transaction totals",
+          "status": "passed",
+          "title": "should calculate transaction totals",
+          "duration": 752,
+          "failureMessages": []
+        },
+        {
+          "ancestorTitles": ["", "Transaction Model CRUD"],
+          "fullName": " Transaction Model CRUD should order transactions by timestamp",
+          "status": "passed",
+          "title": "should order transactions by timestamp",
+          "duration": 680,
+          "failureMessages": []
+        }
+      ],
+      "startTime": 1752425700155,
+      "endTime": 1752425705335,
+      "status": "passed",
+      "message": "",
+      "name": "/home/runner/workspace/packages/server/src/__tests__/models/transaction.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": ["", "XpLedger Model CRUD"],
+          "fullName": " XpLedger Model CRUD should create an XP gain entry",
+          "status": "passed",
+          "title": "should create an XP gain entry",
+          "duration": 1276,
+          "failureMessages": []
+        },
+        {
+          "ancestorTitles": ["", "XpLedger Model CRUD"],
+          "fullName": " XpLedger Model CRUD should create an XP loss entry (death penalty)",
+          "status": "passed",
+          "title": "should create an XP loss entry (death penalty)",
+          "duration": 538,
+          "failureMessages": []
+        },
+        {
+          "ancestorTitles": ["", "XpLedger Model CRUD"],
+          "fullName": " XpLedger Model CRUD should read XP entries with character",
+          "status": "passed",
+          "title": "should read XP entries with character",
+          "duration": 687,
+          "failureMessages": []
+        },
+        {
+          "ancestorTitles": ["", "XpLedger Model CRUD"],
+          "fullName": " XpLedger Model CRUD should find all XP entries for a character",
+          "status": "passed",
+          "title": "should find all XP entries for a character",
+          "duration": 725,
+          "failureMessages": []
+        },
+        {
+          "ancestorTitles": ["", "XpLedger Model CRUD"],
+          "fullName": " XpLedger Model CRUD should calculate total XP changes",
+          "status": "passed",
+          "title": "should calculate total XP changes",
+          "duration": 759,
+          "failureMessages": []
+        },
+        {
+          "ancestorTitles": ["", "XpLedger Model CRUD"],
+          "fullName": " XpLedger Model CRUD should find XP losses only",
+          "status": "passed",
+          "title": "should find XP losses only",
+          "duration": 720,
+          "failureMessages": []
+        },
+        {
+          "ancestorTitles": ["", "XpLedger Model CRUD"],
+          "fullName": " XpLedger Model CRUD should order entries by timestamp",
+          "status": "passed",
+          "title": "should order entries by timestamp",
+          "duration": 649,
+          "failureMessages": []
+        }
+      ],
+      "startTime": 1752425705455,
+      "endTime": 1752425710809,
+      "status": "passed",
+      "message": "",
+      "name": "/home/runner/workspace/packages/server/src/__tests__/models/xpLedger.test.ts"
+    }
+  ]
+}
