@@ -1,201 +1,270 @@
 # Aeturnis Online Development Roadmap
 
-**Current Version**: v1.0.0 "Jörmun"  
+**Current Version**: v1.1.0-dev "Jörmun"  
 **Last Updated**: 2025-07-13  
-**Implementation Speed**: ~2.5 systems/day (based on current progress)
+**Implementation Speed**: ~3 systems/day (based on current progress: 6 systems
+in 2 days)
 
 ## Development Phase Overview
 
 ### Phase Timeline Summary
 
-- **Development (MVP)**: July 2025 - September 2025 (2.5 months)
-- **Alpha**: October 2025 - November 2025 (2 months)
-- **Beta**: December 2025 - February 2026 (3 months)
-- **Release**: March 2026
+- **Phase 1 (MVP)**: July 2025 - August 2025 (1.5 months)
+- **Phase 2 (Alpha)**: September 2025 - October 2025 (2 months)
+- **Phase 3 (Beta)**: November 2025 - January 2026 (3 months)
+- **Phase 4 (Release)**: February 2026
 
 ---
 
-## Phase 1: Development (MVP) - Core Game Loop
+## Phase 1: MVP - Core Game Loop
 
-**Target**: 32 systems | **Status**: 5/32 complete (15.6%)  
-**Estimated Completion**: September 2025
+**Target**: 32 systems | **Status**: 6/32 complete (18.8%)  
+**Estimated Completion**: August 2025
 
-### July 2025 (Foundation & Combat)
+### ✅ Completed Systems (July 8-13, 2025)
 
-| Week                | Systems                        | Status      | Features                             |
-| ------------------- | ------------------------------ | ----------- | ------------------------------------ |
-| Week 2 (July 8-14)  | [P1-S1-A/B/C] Infrastructure   | ✅ Complete | CI/CD, Database, Package Management  |
-|                     | [P1-S1-1] Core Architecture    | ✅ Complete | Services, Repositories, DI Container |
-| Week 3 (July 15-21) | [P1-S7-1] Banking Service      | 🔄 Next     | Critical for death penalties         |
-|                     | [P1-S2-1] Account Management   | ⏳ Planned  | Authentication, JWT                  |
-|                     | [P1-S7-2] Death & Respawn      | ⏳ Planned  | Core mechanic                        |
-| Week 4 (July 22-28) | [P1-S4-1] Core Combat Engine   | ⏳ Planned  | Damage calculation                   |
-|                     | [P1-S4-2] Skill System         | ⏳ Planned  | Class abilities                      |
-|                     | [P1-S9-1] Complete Chat System | ⏳ Planned  | 4 mandatory channels                 |
+| Catalog Tag | System Name                    | Version    | Features                                                               |
+| ----------- | ------------------------------ | ---------- | ---------------------------------------------------------------------- |
+| [P1-S1-C]   | Package Management Setup       | v1.0.0     | pnpm monorepo, workspace configuration                                 |
+| [P1-S1-A]   | GitHub Actions CI              | v1.0.0     | CI/CD pipeline, PostgreSQL services, coverage reporting                |
+| [P1-S1-B]   | Initial DB Schema & Migrations | v1.0.0     | 6 Prisma models, migration system, Neon database                       |
+| [Coverage]  | Test Coverage Enhancement      | v1.0.0     | 91.66% coverage, 48 CRUD tests, test isolation                         |
+| [P1-S1-1]   | Core Architecture              | v1.0.0     | DI container, services, repositories, event bus                        |
+| [P1-S1-2]   | Security & Auth                | v1.1.0-dev | JWT auth, argon2 passwords, rate limiting, Helmet security, 180+ tests |
 
-### August 2025 (Characters & Items)
+### 🔄 Current Sprint (July 15-21, 2025)
 
-| Week                   | Systems                        | Status     | Features               |
-| ---------------------- | ------------------------------ | ---------- | ---------------------- |
-| Week 1 (July 29-Aug 4) | [P1-S2-2] Character Creation   | ⏳ Planned | 6 races, 8 classes     |
-|                        | [P1-S2-3] Stats & Progression  | ⏳ Planned | XP, levels, attributes |
-|                        | [P1-S3-1] Item System          | ⏳ Planned | Rarities, stats        |
-| Week 2 (Aug 5-11)      | [P1-S3-2] Equipment Service    | ⏳ Planned | 15 equipment slots     |
-|                        | [P1-S3-3] Inventory Management | ⏳ Planned | Bags, sorting          |
-|                        | [P1-S6-1] Loot System          | ⏳ Planned | Drop tables            |
-| Week 3 (Aug 12-18)     | [P1-S5-1] NPC System           | ⏳ Planned | Vendors, quest givers  |
-|                        | [P1-S5-2] Basic AI Service     | ⏳ Planned | Combat AI              |
-|                        | [P1-S6-2] Shop System          | ⏳ Planned | Buy/sell mechanics     |
-| Week 4 (Aug 19-25)     | [P1-S8-1] Zone Service         | ⏳ Planned | Area management        |
-|                        | [P1-S8-2] Travel System        | ⏳ Planned | Movement, recalls      |
-|                        | [P1-S6-3] Consumables          | ⏳ Planned | Potions, food          |
+| Catalog Tag | System Name        | Priority    | Justification                           |
+| ----------- | ------------------ | ----------- | --------------------------------------- |
+| [P1-S7-1]   | Banking Service    | 🔴 Critical | Required for death penalty system       |
+| [P1-S7-2]   | Death & Respawn    | 🔴 Critical | Core game mechanic (lose unbanked gold) |
+| [P1-S2-1]   | Account Management | 🟡 High     | Player profiles, character slots        |
 
-### September 2025 (Polish & Core Features)
+### 📅 Development Schedule
 
-| Week                  | Systems                        | Status     | Features              |
-| --------------------- | ------------------------------ | ---------- | --------------------- |
-| Week 1 (Aug 26-Sep 1) | [P1-S10-1] Friend System       | ⏳ Planned | Social features       |
-|                       | [P1-S10-2] Player Search       | ⏳ Planned | /who, inspection      |
-|                       | [P1-S9-2] Emote System         | ⏳ Planned | Social expressions    |
-| Week 2 (Sep 2-8)      | [P1-S11-1] Tutorial System     | ⏳ Planned | New player experience |
-|                       | [P1-S11-2] Help System         | ⏳ Planned | Documentation         |
-|                       | [P1-S12-1] Settings Management | ⏳ Planned | Player preferences    |
-| Week 3 (Sep 9-15)     | [P1-S1-2] Security & Auth      | ⏳ Planned | 2FA, rate limiting    |
-|                       | [P1-S1-3] Monitoring & Logging | ⏳ Planned | Analytics, metrics    |
-|                       | [P1-S1-4] Cache & Performance  | ⏳ Planned | Redis, optimization   |
-| Week 4 (Sep 16-22)    | [P1-S13-1] Moderation Tools    | ⏳ Planned | Admin features        |
-|                       | [P1-S14-1] Anti-Cheat System   | ⏳ Planned | Security measures     |
-|                       | [P1-S15-1] Leaderboard Service | ⏳ Planned | Rankings              |
+#### July 2025 (Foundation & Core Systems)
 
-**Version Milestones**:
+| Week                | Systems to Implement                    | Count | Key Features                                        |
+| ------------------- | --------------------------------------- | ----- | --------------------------------------------------- |
+| Week 3 (July 15-21) | Banking, Death, Account Management      | 3     | Gold storage, death penalties, character management |
+| Week 4 (July 22-28) | Monitoring, Logging, Character Creation | 3     | Performance tracking, character customization       |
 
-- v1.1.0 "Fenrir": Banking & Account Systems (July Week 3)
-- v1.2.0 "Sleipnir": Combat & Skills (July Week 4)
-- v1.3.0 "Huginn": Characters & Items (August Week 2)
-- v1.4.0 "Muninn": NPCs & Economy (August Week 3)
-- v1.5.0 "Níðhöggr": Social & Polish (September Week 2)
+#### August 2025 (Combat, Economy & Social)
+
+| Week                   | Systems to Implement         | Count | Key Features                     |
+| ---------------------- | ---------------------------- | ----- | -------------------------------- |
+| Week 1 (July 29-Aug 4) | Stats, Combat Engine, Skills | 3     | Battle system, class abilities   |
+| Week 2 (Aug 5-11)      | Items, Equipment, Inventory  | 3     | Item management, equipment slots |
+| Week 3 (Aug 12-18)     | NPCs, AI, Loot, Shop         | 4     | Vendors, combat AI, drop tables  |
+| Week 4 (Aug 19-25)     | Zones, Travel, Chat, Friends | 4     | World navigation, communication  |
+
+#### Final Sprint
+
+| Week               | Systems to Implement             | Count | Key Features                    |
+| ------------------ | -------------------------------- | ----- | ------------------------------- |
+| Week 5 (Aug 26-30) | Tutorial, Settings, Leaderboards | 3     | New player experience, rankings |
+
+### 📊 Complete Phase 1 System List (32 Total)
+
+#### Infrastructure (6 systems - ✅ ALL COMPLETE)
+
+1. [P1-S1-C] Package Management Setup ✅
+2. [P1-S1-A] GitHub Actions CI ✅
+3. [P1-S1-B] Initial DB Schema & Migrations ✅
+4. [Coverage] Test Coverage Enhancement ✅
+5. [P1-S1-1] Core Architecture ✅
+6. [P1-S1-2] Security & Auth ✅
+
+#### Core Systems (26 remaining)
+
+7. [P1-S1-3] Monitoring & Logging
+8. [P1-S1-4] Cache & Performance
+9. [P1-S2-1] Account Management
+10. [P1-S2-2] Character Creation & Customization
+11. [P1-S2-3] Stats & Progression
+12. [P1-S3-1] Item System
+13. [P1-S3-2] Equipment Service
+14. [P1-S3-3] Inventory Management
+15. [P1-S4-1] Core Combat Engine
+16. [P1-S4-2] Skill System
+17. [P1-S4-3] Buffs & Debuffs
+18. [P1-S5-1] NPC System
+19. [P1-S5-2] Basic AI Service
+20. [P1-S6-1] Loot System
+21. [P1-S6-2] Shop System
+22. [P1-S6-3] Consumables
+23. [P1-S7-1] Banking Service (CRITICAL)
+24. [P1-S7-2] Death & Respawn System
+25. [P1-S8-1] Zone Service
+26. [P1-S8-2] Travel System
+27. [P1-S9-1] Complete Chat System
+28. [P1-S9-2] Emote System
+29. [P1-S10-1] Friend System
+30. [P1-S10-2] Player Search & Inspection
+31. [P1-S11-1] Tutorial System
+32. [P1-S12-1] Settings Management
+33. [P1-S15-1] Leaderboard Service
+
+### Version Milestones
+
+| Version | Codename   | Systems Included                                    | Target Date   |
+| ------- | ---------- | --------------------------------------------------- | ------------- |
+| v1.0.0  | "Jörmun"   | Foundation & Infrastructure (6 systems)             | ✅ Released   |
+| v1.1.0  | "Fenrir"   | Banking, Death, Account (3 systems)                 | July 21, 2025 |
+| v1.2.0  | "Týr"      | Monitoring, Logging, Character Creation (3 systems) | July 28, 2025 |
+| v1.3.0  | "Odin"     | Stats, Combat, Skills (3 systems)                   | Aug 4, 2025   |
+| v1.4.0  | "Thor"     | Items, Equipment, Inventory (3 systems)             | Aug 11, 2025  |
+| v1.5.0  | "Loki"     | NPCs, AI, Loot, Shop (4 systems)                    | Aug 18, 2025  |
+| v1.6.0  | "Freya"    | Zones, Travel, Chat, Friends (4 systems)            | Aug 25, 2025  |
+| v1.7.0  | "Heimdall" | Tutorial, Settings, Leaderboards (3 systems)        | Aug 30, 2025  |
+| v2.0.0  | "Ragnarök" | MVP Complete (All 32 systems)                       | Aug 30, 2025  |
 
 ---
 
 ## Phase 2: Alpha - Advanced Systems
 
-**Target**: 35+ systems | **Timeline**: October - November 2025  
-**Focus**: Content expansion, advanced features, stress testing
+**Target**: 18 systems | **Timeline**: September - October 2025  
+**Focus**: Group content, PvP, economy
 
-### October 2025 (Content Systems)
+### September 2025 Schedule
 
-| Week   | Major Features | Description                        |
-| ------ | -------------- | ---------------------------------- |
-| Week 1 | Quest System   | Quest chains, objectives, rewards  |
-| Week 2 | Party System   | Group mechanics, loot distribution |
-| Week 3 | PvP Zones      | Wilderness areas, PK mechanics     |
-| Week 4 | Dungeon System | Instanced content, boss mechanics  |
+| Week   | Catalog Tags         | Systems                       | Key Features                      |
+| ------ | -------------------- | ----------------------------- | --------------------------------- |
+| Week 1 | [P2-S1-1], [P2-S2-1] | Party System, Quest System    | Group mechanics, quest chains     |
+| Week 2 | [P2-S3-1], [P2-S3-2] | PvP Service, Alignment System | PK mechanics, good/evil alignment |
+| Week 3 | [P2-S4-1], [P2-S4-2] | Trading, Auction House        | Player economy                    |
+| Week 4 | [P2-S5-1], [P2-S6-1] | Mail System, Reincarnation    | Communication, character rebirth  |
 
-### November 2025 (Advanced Features)
+### October 2025 Schedule
 
-| Week   | Major Features     | Description                     |
-| ------ | ------------------ | ------------------------------- |
-| Week 1 | Guild System       | Guild management, ranks, banks  |
-| Week 2 | Trade System       | Player-to-player trading, mail  |
-| Week 3 | Crafting System    | Professions, recipes, gathering |
-| Week 4 | Achievement System | Titles, rewards, statistics     |
+| Week   | Systems                          | Key Features                |
+| ------ | -------------------------------- | --------------------------- |
+| Week 1 | Daily Activities, Advanced Zones | Login rewards, world events |
+| Week 2 | Dungeon System, World Bosses     | Group content               |
+| Week 3 | Guild System (placeholder)       | Basic guild features        |
+| Week 4 | Alpha Polish & Testing           | Stress tests                |
 
 **Alpha Milestones**:
 
-- Closed Alpha Start: October 1, 2025
-- Stress Test Weekend: October 25-27, 2025
-- Open Alpha: November 15, 2025
+- Closed Alpha Start: September 1, 2025
+- Stress Test Weekend: September 25-27, 2025
+- Open Alpha: October 15, 2025
 
 ---
 
-## Phase 3: Beta - Polish & Endgame
+## Phase 3: Beta - Advanced Features
 
-**Target**: 40+ systems | **Timeline**: December 2025 - February 2026  
-**Focus**: Endgame content, balance, polish
+**Target**: 25+ systems | **Timeline**: November 2025 - January 2026  
+**Focus**: Endgame content, crafting, advanced systems
 
-### December 2025 (Endgame Systems)
+### November 2025 (Endgame Systems)
 
-| Week   | Major Features | Description                      |
-| ------ | -------------- | -------------------------------- |
-| Week 1 | Raid System    | Large group content, raid bosses |
-| Week 2 | Arena System   | Structured PvP, rankings         |
-| Week 3 | Housing System | Player homes, decoration         |
-| Week 4 | Holiday Events | Seasonal content                 |
+- Achievement System
+- Gem System & Enchanting
+- Crafting Professions
+- Instance/Dungeon System
 
-### January 2026 (Economy & Polish)
+### December 2025 (Social & Economy)
 
-| Week   | Major Features | Description             |
-| ------ | -------------- | ----------------------- |
-| Week 1 | Auction House  | Player marketplace      |
-| Week 2 | Mount System   | Travel enhancements     |
-| Week 3 | Pet System     | Companions, pet battles |
-| Week 4 | Cosmetic Shop  | Monetization features   |
+- Clan System (full implementation)
+- Kingdom System
+- Advanced Trading
+- Housing System
 
-### February 2026 (Final Polish)
+### January 2026 (Polish & Launch Prep)
 
-| Week   | Major Features     | Description               |
-| ------ | ------------------ | ------------------------- |
-| Week 1 | Voice Chat         | Integrated communication  |
-| Week 2 | Controller Support | Gamepad compatibility     |
-| Week 3 | Performance Pass   | Optimization, bug fixes   |
-| Week 4 | Launch Preparation | Marketing, server scaling |
+- AI Integration (Ollama)
+- Marriage System
+- Pet System
+- Final optimization
 
 **Beta Milestones**:
 
-- Closed Beta: December 1, 2025
-- Open Beta: January 15, 2026
-- Release Candidate: February 20, 2026
+- Closed Beta: November 1, 2025
+- Open Beta: December 15, 2025
+- Release Candidate: January 20, 2026
 
 ---
 
 ## Phase 4: Release
 
-**Target Date**: March 1, 2026  
+**Target Date**: February 1, 2026  
 **Launch Features**:
 
 - 100+ hours of content
-- 6 races, 8 classes
-- 20+ zones
-- 5 dungeons, 2 raids
-- Comprehensive PvP system
-- Full social features
-- Mobile companion app
+- 6 races (+ 4 special reincarnation races)
+- 8 classes with full skill trees
+- 20+ zones with level progression
+- Complete PvP and PvE systems
+- Full social features and economy
 
 ---
 
-## Risk Factors & Adjustments
+## Critical Path Dependencies
 
-### Optimistic Scenario (2x speed)
+1. **Banking MUST come before Death System** (death penalty requires banking)
+2. **Account Management before Character Creation** (characters need accounts)
+3. **Combat Engine before NPCs/AI** (AI needs combat system)
+4. **Items before Equipment/Inventory** (foundation for item management)
+5. **Zones before Travel System** (need places to travel between)
 
-- MVP Complete: August 2025
-- Alpha: September 2025
-- Beta: October-November 2025
-- Release: December 2025
+## Risk Factors & Velocity
 
-### Pessimistic Scenario (0.5x speed)
+### Current Velocity
 
-- MVP Complete: December 2025
-- Alpha: January-March 2026
-- Beta: April-July 2026
-- Release: August 2026
+- **Achieved**: 6 systems in 2 days = 3 systems/day
+- **Required**: 26 systems in 48 days = 0.54 systems/day
+- **Buffer**: 5.5x faster than required
 
-### Current Velocity Metrics
+### Adjusted Timeline (Conservative)
 
-- **Systems per day**: 2.5 (based on 5 systems in 2 days)
-- **Test coverage**: 48.63% (258 tests)
-- **CI success rate**: 100%
-- **Audit resolution**: 100%
+If velocity drops to 1 system/day:
+
+- MVP Complete: August 5, 2025 (3 weeks early)
+- Alpha Complete: September 20, 2025 (1 week early)
+- Beta Complete: December 25, 2025 (4 weeks early)
+
+### Risk Mitigation
+
+- Front-load critical systems (Banking, Death, Combat)
+- Implement MVP systems before nice-to-haves
+- Keep 20% time buffer for testing/polish
+- Prioritize systems that block others
 
 ---
 
-## Public Communication
+## Success Metrics
 
-This roadmap will be updated weekly with:
+### Phase 1 (MVP)
 
-- ✅ Completed systems
-- 🔄 In-progress work
-- ⏳ Upcoming features
-- 📊 Velocity metrics
-- 🎯 Milestone progress
+- ✅ All 32 core systems operational
+- ✅ 90%+ test coverage maintained
+- ✅ <200ms API response times
+- ✅ Support 1,000 concurrent players
 
-Follow development at: [GitHub Repository]
+### Phase 2 (Alpha)
+
+- ✅ Group content functional
+- ✅ PvP system balanced
+- ✅ Economy stable (no inflation)
+- ✅ Support 5,000 concurrent players
+
+### Phase 3 (Beta)
+
+- ✅ All content complete
+- ✅ <1% crash rate
+- ✅ Endgame progression working
+- ✅ Support 10,000 concurrent players
+
+### Phase 4 (Release)
+
+- ✅ 99.9% uptime
+- ✅ All monetization systems operational
+- ✅ Support 50,000+ concurrent players
+- ✅ Positive player reviews
+
+---
+
+**Updated by**: Claude Code  
+**Based on**: aeturnis-prompt-tracker.md (32 systems)  
+**Next Update**: After Banking Service implementation
