@@ -19,16 +19,23 @@ This project uses two separate repositories:
 
 ## Current Project Status (July 13, 2025)
 
+### Repository States
+
+- **Documentation Repo**: `new-docs` branch has all docs, pending merge to main
+- **Game Code Repo**: `main` branch has monorepo structure, ready for
+  development
+- **Sparse Checkout**: Currently disabled after code commit
+
 ### Architecture Decisions
 
 - **Versions**: Server v1.0.0, Client v1.0.0
 - **Monorepo**: pnpm workspaces with packages/server, packages/client,
   packages/shared
-- **CI**: GitHub Actions with Codecov integration (pnpm lint, test, build)
-- **Database**: Prisma for DB layer & migrations (PostgreSQL)
-- **Testing**: Vitest for unit tests (90%+ coverage mandatory)
+- **CI**: GitHub Actions (pnpm lint, test, build)
+- **Database**: Prisma for DB layer & migrations
+- **Testing**: Vitest for unit tests
 - **Code Quality**: ESLint + Prettier (repo-local preset)
-- **Package Manager**: pnpm (migrated from Yarn 4)
+- **Package Manager**: pnpm (NEVER npm)
 
 ### Documentation Structure
 
@@ -46,7 +53,7 @@ docs/
 ├── phase-completions/      # Phase completion reports
 ├── phases/                 # Implementation plans
 ├── prompts/                # AI agent prompts
-│   └── aeturnis-prompt-tracker.md  # Tracks all prompts
+│   └── aeturnis-prompt-tracker.md  # Tracks all prompts (TABLE FORMAT)
 ├── qa-reports/             # QA testing reports
 └── sop/                    # Standard operating procedures
 ```
@@ -55,7 +62,8 @@ docs/
 
 - **Implementation Plan**: docs/phases/aeturnis-implementation-plan.md (v5.0)
 - **Game Design**: docs/misc/aeturnis-game-design-v4.md (aligned version)
-- **Prompt Tracker**: docs/prompts/aeturnis-prompt-tracker.md
+- **Prompt Tracker**: docs/prompts/aeturnis-prompt-tracker.md (REORGANIZED TO
+  TABLES)
 - **DDERF Issues**: docs/methodology/DDERF-Issues.md (v0.1.0)
 
 ### Agent Roles (CAFE v2.0 Division Protocol)
@@ -71,6 +79,7 @@ docs/
 3. All features need Implementation Reports
 4. Track issues in DDERF-Issues.md
 5. Update prompt tracker for each feature
+6. **MANDATORY TESTING**: Vitest with 90%+ coverage after every implementation
 
 ### Critical Game Mechanics
 
@@ -88,30 +97,64 @@ docs/
    - pnpm workspace configuration implemented
    - TypeScript, ESLint, Prettier configured
    - Packages created: server, client, shared
-   - Git commits: `fee192a` (initial), `1b3d3a9` (coverage), `626b29c` (fixes)
-   - CI/CD pipeline fully functional
+   - Git commits: `fee192a` (code), `97732e5` (docs)
+   - Both repositories updated successfully
 
 2. **GitHub Actions CI** ([P1-S1-2])
-   - Complete pipeline with PostgreSQL service
-   - Codecov integration added
-   - All checks passing
+   - Complete CI pipeline with PostgreSQL service
+   - pnpm build, lint, test, coverage reporting
+   - Codecov integration
+   - **Status**: ✅ Audited & Resolved
+   - Git commit: Multiple commits, final audit resolution
 
-3. **Initial DB Schema** ([P1-S1-3])
-   - Prisma schema with 6 models implemented
-   - Seed script created
-   - 91.66% test coverage achieved
+3. **Initial DB Schema & Migrations** ([P1-S1-3])
+   - 6 complete Prisma models (Account, Character, BankAccount, Transaction,
+     XpLedger, PkKillLog)
+   - Migration committed: `20250713024743_init`
+   - Production Neon database configured
+   - **Status**: ✅ Audited & Resolved
+   - Git commits: `a10a8c7`, `f0feebf`, `8c132bf`
 
-4. **Test Coverage Enhancement**
-   - Vitest configured with 90%+ thresholds
-   - All packages meet coverage requirements
-   - Mandatory testing policy established
+4. **Test Coverage Enhancement** ([Coverage])
+   - 48 comprehensive CRUD tests for all 6 models
+   - 91.66% line coverage (exceeds 90% threshold)
+   - Test isolation with unique data generation
+   - **Status**: ✅ Audited & Resolved
+   - Git commits: `c1e5452`, `a10a8c7`
 
-#### 📋 Next Steps
+5. **Prompt Tracker Reorganization** (2025-07-13)
+   - Converted from list to comprehensive table structure
+   - Quality metrics tracking (CI, Audit, Coverage)
+   - Status: 4/32 systems implemented (12.5%)
+   - Git commit: `12e8eb4`
 
-5. Banking service implementation
-6. PK cooldown helper (Redis + Postgres)
-7. Authentication service
-8. Character creation endpoints
+#### 📋 Next Steps (Priority Order)
+
+1. **[P1-S7-1] Banking Service** - CRITICAL for death penalties
+2. **[P1-S2-1] Account Management** - Authentication foundation
+3. **[P1-S7-2] Death & Respawn System** - Core game mechanic
+4. **[P1-S9-1] Complete Chat System** - 4 mandatory channels
+
+### Database Configuration
+
+- **Provider**: Neon PostgreSQL (serverless)
+- **Migration Hash**: `20250713024743_init`
+- **Connection**: Production database with SSL
+- **Status**: ✅ Fully configured and tested
+
+### Test Coverage Status
+
+- **Server**: 91.66% lines, 48 CRUD tests, serial execution
+- **Client**: 100% coverage
+- **Shared**: 100% coverage
+- **Policy**: 90% minimum coverage MANDATORY for all implementations
+
+### Quality Assurance
+
+- **CI Status**: 100% pass rate (4/4 implemented systems)
+- **Audit Status**: 75% audited & resolved (3/4 systems)
+- **Build Status**: All packages build successfully
+- **Lint Status**: Zero errors across all packages
 
 ### Prisma Directory Structure
 
@@ -173,5 +216,38 @@ git branch -D docs-only-temp
 ```
 
 This ensures only the `/docs` folder is tracked and pushed to the documentation
-repository, keeping code and documentation separate. NEVER push the entire
-repository to the documentation repo!
+repository, keeping code and documentation separate.
+
+## Recent Accomplishments Summary (2025-07-13)
+
+### Database & Testing Foundation Complete
+
+- ✅ Production-ready Prisma schema with 6 models
+- ✅ Committed migration for CI/CD deployment
+- ✅ 48 comprehensive CRUD tests (91.66% coverage)
+- ✅ Database connected to Neon production instance
+- ✅ All audit recommendations resolved
+
+### Infrastructure Fully Operational
+
+- ✅ pnpm monorepo with CI/CD pipeline
+- ✅ GitHub Actions with PostgreSQL services
+- ✅ Comprehensive test coverage enforcement
+- ✅ Production database setup and seeding documentation
+
+### Project Management Enhanced
+
+- ✅ Prompt tracker reorganized into table format
+- ✅ Quality metrics tracking implemented
+- ✅ Implementation reports updated with latest status
+- ✅ Audit findings addressed and documented
+
+### Ready for Next Phase
+
+- Banking service implementation (critical path)
+- Account management system
+- Death penalty mechanics
+- Chat system foundation
+
+The project now has a solid foundation with production-ready database,
+comprehensive testing, and full CI/CD automation.

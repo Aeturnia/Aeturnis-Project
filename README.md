@@ -1,6 +1,9 @@
 # Aeturnis Online
 
 [![CI](https://github.com/Aeturnia/Aeturnis-Project/actions/workflows/ci.yml/badge.svg)](https://github.com/Aeturnia/Aeturnis-Project/actions/workflows/ci.yml)
+![Server Version](https://img.shields.io/badge/server-v1.0.0-blue)
+![Client Version](https://img.shields.io/badge/client-v1.0.0-green)
+![Compatibility](https://img.shields.io/badge/compatibility-✓-success)
 
 A multiplayer online RPG game built with Node.js and modern web technologies.
 
