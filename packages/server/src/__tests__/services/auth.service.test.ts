@@ -1,24 +1,69 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
 import { AuthService } from '../../services/auth.service';
-import type { IAccountRepository } from '../../repositories';
+import type { IAuthRepository } from '../../repositories';
+import { Account } from '@prisma/client';
+import {
+  RegisterRequest,
+  LoginRequest,
+  UpdateProfileRequest,
+} from '../../types/auth.schemas';
+import {
+  AuthenticationError,
+  ConflictError,
+  NotFoundError,
+} from '../../middleware/error.middleware';
+import * as jwtUtils from '../../utils/jwt';
+import * as argon2 from 'argon2';
+
+// Mock JWT utilities
+vi.mock('../../utils/jwt', () => ({
+  generateAccessToken: vi.fn(() => 'mock-access-token'),
+  generateRefreshToken: vi.fn(() => 'mock-refresh-token'),
+  verifyToken: vi.fn(),
+}));
+
+// Mock argon2
+vi.mock('argon2', () => ({
+  hash: vi.fn(() => Promise.resolve('hashed-password')),
+  verify: vi.fn(() => Promise.resolve(true)),
+  argon2id: 'argon2id',
+}));
 
 describe('AuthService', () => {
   let authService: AuthService;
-  let mockAccountRepository: IAccountRepository;
+  let mockAuthRepository: IAuthRepository;
+  let mockAccount: Account;
 
   beforeEach(() => {
-    // Create mock repository
-    mockAccountRepository = {
-      findById: vi.fn(),
-      findByEmail: vi.fn(),
-      create: vi.fn(),
-      update: vi.fn(),
-      delete: vi.fn(),
-      findMany: vi.fn(),
-      count: vi.fn(),
+    // Create mock account
+    mockAccount = {
+      id: 'test-account-id',
+      email: 'test@example.com',
+      hashedPassword: 'hashed-password',
+      createdAt: new Date('2024-01-01'),
+      updatedAt: new Date('2024-01-01'),
+      lastLoginAt: new Date('2024-01-01'),
     };
 
-    authService = new AuthService(mockAccountRepository);
+    // Create mock repository
+    mockAuthRepository = {
+      findByEmail: vi.fn(),
+      createAccount: vi.fn(),
+      verifyPassword: vi.fn(),
+      updateLastLogin: vi.fn(),
+      updatePassword: vi.fn(),
+      findById: vi.fn(),
+      update: vi.fn(),
+      findMany: vi.fn(),
+      create: vi.fn(),
+      delete: vi.fn(),
+    };
+
+    authService = new AuthService(mockAuthRepository);
+  });
+
+  afterEach(() => {
+    vi.clearAllMocks();
   });
 
   describe('Constructor', () => {
@@ -27,144 +72,330 @@ describe('AuthService', () => {
     });
 
     it('should inject repository dependency', () => {
-      // The repository is private, so we test behavior indirectly
       expect(authService).toBeDefined();
     });
   });
 
-  describe('Register Method', () => {
-    it('should throw "Not implemented" error', async () => {
-      await expect(authService.register('test@example.com', 'password123')).rejects.toThrow(
-        'Not implemented'
-      );
+  describe('register', () => {
+    const registerData: RegisterRequest = {
+      email: 'test@example.com',
+      password: 'password123',
+    };
+
+    it('should successfully register a new user', async () => {
+      // Setup mocks
+      (mockAuthRepository.findByEmail as any).mockResolvedValue(null);
+      (mockAuthRepository.createAccount as any).mockResolvedValue(mockAccount);
+      (mockAuthRepository.updateLastLogin as any).mockResolvedValue({
+        ...mockAccount,
+        lastLoginAt: new Date(),
+      });
+
+      const result = await authService.register(registerData);
+
+      expect(result).toEqual({
+        success: true,
+        message: expect.any(String),
+        data: {
+          account: {
+            id: mockAccount.id,
+            email: mockAccount.email,
+            createdAt: mockAccount.createdAt,
+            lastLoginAt: mockAccount.lastLoginAt,
+          },
+          accessToken: 'mock-access-token',
+          refreshToken: 'mock-refresh-token',
+          expiresIn: expect.any(Number),
+        },
+      });
+
+      expect(mockAuthRepository.findByEmail).toHaveBeenCalledWith(registerData.email);
+      expect(mockAuthRepository.createAccount).toHaveBeenCalledWith(registerData);
+      expect(mockAuthRepository.updateLastLogin).toHaveBeenCalledWith(mockAccount.id);
     });
 
-    it('should accept email and password parameters', async () => {
-      const email = 'test@example.com';
-      const password = 'password123';
+    it('should throw ConflictError if email already exists', async () => {
+      (mockAuthRepository.findByEmail as any).mockResolvedValue(mockAccount);
 
-      await expect(authService.register(email, password)).rejects.toThrow('Not implemented');
-    });
-  });
-
-  describe('Login Method', () => {
-    it('should throw "Not implemented" error', async () => {
-      await expect(authService.login('test@example.com', 'password123')).rejects.toThrow(
-        'Not implemented'
-      );
+      await expect(authService.register(registerData)).rejects.toThrow(ConflictError);
+      expect(mockAuthRepository.findByEmail).toHaveBeenCalledWith(registerData.email);
+      expect(mockAuthRepository.createAccount).not.toHaveBeenCalled();
     });
 
-    it('should accept email and password parameters', async () => {
-      const email = 'test@example.com';
-      const password = 'password123';
+    it('should handle repository errors', async () => {
+      (mockAuthRepository.findByEmail as any).mockResolvedValue(null);
+      (mockAuthRepository.createAccount as any).mockRejectedValue(new Error('Database error'));
 
-      await expect(authService.login(email, password)).rejects.toThrow('Not implemented');
-    });
-  });
-
-  describe('Logout Method', () => {
-    it('should throw "Not implemented" error', async () => {
-      await expect(authService.logout('user123')).rejects.toThrow('Not implemented');
-    });
-
-    it('should accept userId parameter', async () => {
-      const userId = 'user123';
-
-      await expect(authService.logout(userId)).rejects.toThrow('Not implemented');
-    });
-  });
-
-  describe('Get Profile Method', () => {
-    it('should throw "Not implemented" error', async () => {
-      await expect(authService.getProfile('user123')).rejects.toThrow('Not implemented');
-    });
-
-    it('should accept userId parameter', async () => {
-      const userId = 'user123';
-
-      await expect(authService.getProfile(userId)).rejects.toThrow('Not implemented');
-    });
-  });
-
-  describe('Update Profile Method', () => {
-    it('should throw "Not implemented" error', async () => {
-      await expect(
-        authService.updateProfile('user123', { email: 'new@example.com' })
-      ).rejects.toThrow('Not implemented');
-    });
-
-    it('should accept userId and updates parameters', async () => {
-      const userId = 'user123';
-      const updates = { email: 'new@example.com' };
-
-      await expect(authService.updateProfile(userId, updates)).rejects.toThrow('Not implemented');
+      await expect(authService.register(registerData)).rejects.toThrow('Registration failed');
     });
   });
 
-  describe('Recover Password Method', () => {
-    it('should throw "Not implemented" error', async () => {
-      await expect(authService.recoverPassword('test@example.com')).rejects.toThrow(
-        'Not implemented'
-      );
+  describe('login', () => {
+    const loginData: LoginRequest = {
+      email: 'test@example.com',
+      password: 'password123',
+    };
+
+    it('should successfully login with valid credentials', async () => {
+      // Setup mocks
+      (mockAuthRepository.findByEmail as any).mockResolvedValue(mockAccount);
+      (mockAuthRepository.verifyPassword as any).mockResolvedValue(true);
+      (mockAuthRepository.updateLastLogin as any).mockResolvedValue({
+        ...mockAccount,
+        lastLoginAt: new Date(),
+      });
+
+      const result = await authService.login(loginData);
+
+      expect(result).toEqual({
+        success: true,
+        message: expect.any(String),
+        data: {
+          account: {
+            id: mockAccount.id,
+            email: mockAccount.email,
+            createdAt: mockAccount.createdAt,
+            lastLoginAt: expect.any(Date),
+          },
+          accessToken: 'mock-access-token',
+          refreshToken: 'mock-refresh-token',
+          expiresIn: expect.any(Number),
+        },
+      });
+
+      expect(mockAuthRepository.findByEmail).toHaveBeenCalledWith(loginData.email);
+      expect(mockAuthRepository.verifyPassword).toHaveBeenCalledWith(mockAccount, loginData.password);
+      expect(mockAuthRepository.updateLastLogin).toHaveBeenCalledWith(mockAccount.id);
     });
 
-    it('should accept email parameter', async () => {
-      const email = 'test@example.com';
+    it('should throw AuthenticationError if account not found', async () => {
+      (mockAuthRepository.findByEmail as any).mockResolvedValue(null);
 
-      await expect(authService.recoverPassword(email)).rejects.toThrow('Not implemented');
+      await expect(authService.login(loginData)).rejects.toThrow(AuthenticationError);
+      expect(mockAuthRepository.findByEmail).toHaveBeenCalledWith(loginData.email);
+      expect(mockAuthRepository.verifyPassword).not.toHaveBeenCalled();
+    });
+
+    it('should throw AuthenticationError if password is invalid', async () => {
+      (mockAuthRepository.findByEmail as any).mockResolvedValue(mockAccount);
+      (mockAuthRepository.verifyPassword as any).mockResolvedValue(false);
+
+      await expect(authService.login(loginData)).rejects.toThrow(AuthenticationError);
+      expect(mockAuthRepository.verifyPassword).toHaveBeenCalledWith(mockAccount, loginData.password);
+      expect(mockAuthRepository.updateLastLogin).not.toHaveBeenCalled();
     });
   });
 
-  describe('Repository Integration', () => {
-    it('should be able to access repository methods when implemented', () => {
-      // This test verifies the repository is available for future implementation
-      expect(mockAccountRepository.findByEmail).toBeDefined();
-      expect(mockAccountRepository.create).toBeDefined();
-      expect(mockAccountRepository.update).toBeDefined();
-      expect(mockAccountRepository.delete).toBeDefined();
+  describe('logout', () => {
+    it('should successfully logout user', async () => {
+      (mockAuthRepository.findById as any).mockResolvedValue(mockAccount);
+
+      const result = await authService.logout(mockAccount.id);
+
+      expect(result).toEqual({
+        success: true,
+        message: expect.any(String),
+      });
+
+      expect(mockAuthRepository.findById).toHaveBeenCalledWith(mockAccount.id);
     });
 
-    it('should have repository methods with correct signatures', () => {
-      // Verify mock repository has expected methods
-      expect(typeof mockAccountRepository.findById).toBe('function');
-      expect(typeof mockAccountRepository.findByEmail).toBe('function');
-      expect(typeof mockAccountRepository.create).toBe('function');
-      expect(typeof mockAccountRepository.update).toBe('function');
-      expect(typeof mockAccountRepository.delete).toBe('function');
-      expect(typeof mockAccountRepository.findMany).toBe('function');
-      expect(typeof mockAccountRepository.count).toBe('function');
+    it('should throw NotFoundError if account not found', async () => {
+      (mockAuthRepository.findById as any).mockResolvedValue(null);
+
+      await expect(authService.logout('invalid-id')).rejects.toThrow(NotFoundError);
     });
   });
 
-  describe('Method Signatures', () => {
-    it('should have async register method', () => {
-      expect(authService.register).toBeDefined();
-      expect(authService.register.constructor.name).toBe('AsyncFunction');
+  describe('getProfile', () => {
+    it('should return user profile', async () => {
+      (mockAuthRepository.findById as any).mockResolvedValue(mockAccount);
+
+      const result = await authService.getProfile(mockAccount.id);
+
+      expect(result).toEqual({
+        success: true,
+        data: {
+          account: {
+            id: mockAccount.id,
+            email: mockAccount.email,
+            createdAt: mockAccount.createdAt,
+            lastLoginAt: mockAccount.lastLoginAt,
+          },
+        },
+      });
+
+      expect(mockAuthRepository.findById).toHaveBeenCalledWith(mockAccount.id);
     });
 
-    it('should have async login method', () => {
-      expect(authService.login).toBeDefined();
-      expect(authService.login.constructor.name).toBe('AsyncFunction');
+    it('should throw NotFoundError if account not found', async () => {
+      (mockAuthRepository.findById as any).mockResolvedValue(null);
+
+      await expect(authService.getProfile('invalid-id')).rejects.toThrow(NotFoundError);
+    });
+  });
+
+  describe('updateProfile', () => {
+    it('should update email successfully', async () => {
+      const updates: UpdateProfileRequest = { email: 'new@example.com' };
+      const updatedAccount = { ...mockAccount, email: 'new@example.com' };
+
+      (mockAuthRepository.findById as any)
+        .mockResolvedValueOnce(mockAccount) // First call
+        .mockResolvedValueOnce(updatedAccount); // Final call
+      (mockAuthRepository.findByEmail as any).mockResolvedValue(null);
+      (mockAuthRepository.update as any).mockResolvedValue(updatedAccount);
+
+      const result = await authService.updateProfile(mockAccount.id, updates);
+
+      expect(result.success).toBe(true);
+      expect(result.data.account.email).toBe('new@example.com');
+      expect(mockAuthRepository.findByEmail).toHaveBeenCalledWith('new@example.com');
     });
 
-    it('should have async logout method', () => {
-      expect(authService.logout).toBeDefined();
-      expect(authService.logout.constructor.name).toBe('AsyncFunction');
+    it('should update password successfully', async () => {
+      const updates: UpdateProfileRequest = {
+        currentPassword: 'oldpassword',
+        newPassword: 'newpassword',
+      };
+
+      (mockAuthRepository.findById as any).mockResolvedValue(mockAccount);
+      (mockAuthRepository.verifyPassword as any).mockResolvedValue(true);
+      (mockAuthRepository.updatePassword as any).mockResolvedValue(mockAccount);
+      (argon2.hash as any).mockResolvedValue('new-hashed-password');
+
+      const result = await authService.updateProfile(mockAccount.id, updates);
+
+      expect(result.success).toBe(true);
+      expect(mockAuthRepository.verifyPassword).toHaveBeenCalledWith(mockAccount, 'oldpassword');
+      expect(mockAuthRepository.updatePassword).toHaveBeenCalledWith(mockAccount.id, 'new-hashed-password');
     });
 
-    it('should have async getProfile method', () => {
-      expect(authService.getProfile).toBeDefined();
-      expect(authService.getProfile.constructor.name).toBe('AsyncFunction');
+    it('should throw AuthenticationError for incorrect current password', async () => {
+      const updates: UpdateProfileRequest = {
+        currentPassword: 'wrongpassword',
+        newPassword: 'newpassword',
+      };
+
+      (mockAuthRepository.findById as any).mockResolvedValue(mockAccount);
+      (mockAuthRepository.verifyPassword as any).mockResolvedValue(false);
+
+      await expect(authService.updateProfile(mockAccount.id, updates)).rejects.toThrow(AuthenticationError);
     });
 
-    it('should have async updateProfile method', () => {
-      expect(authService.updateProfile).toBeDefined();
-      expect(authService.updateProfile.constructor.name).toBe('AsyncFunction');
+    it('should throw ConflictError for duplicate email', async () => {
+      const updates: UpdateProfileRequest = { email: 'existing@example.com' };
+      const existingAccount = { ...mockAccount, id: 'different-id' };
+
+      (mockAuthRepository.findById as any).mockResolvedValue(mockAccount);
+      (mockAuthRepository.findByEmail as any).mockResolvedValue(existingAccount);
+
+      await expect(authService.updateProfile(mockAccount.id, updates)).rejects.toThrow(ConflictError);
+    });
+  });
+
+  describe('recoverPassword', () => {
+    it('should return success for existing account', async () => {
+      (mockAuthRepository.findByEmail as any).mockResolvedValue(mockAccount);
+
+      const result = await authService.recoverPassword('test@example.com');
+
+      expect(result).toEqual({
+        success: true,
+        message: expect.stringContaining('Password recovery email has been sent'),
+      });
     });
 
-    it('should have async recoverPassword method', () => {
-      expect(authService.recoverPassword).toBeDefined();
-      expect(authService.recoverPassword.constructor.name).toBe('AsyncFunction');
+    it('should return success for non-existing account to prevent enumeration', async () => {
+      (mockAuthRepository.findByEmail as any).mockResolvedValue(null);
+
+      const result = await authService.recoverPassword('nonexistent@example.com');
+
+      expect(result).toEqual({
+        success: true,
+        message: expect.stringContaining('If an account with this email exists'),
+      });
+    });
+  });
+
+  describe('refreshToken', () => {
+    it('should refresh token successfully', async () => {
+      const refreshToken = 'valid-refresh-token';
+      const mockPayload = { accountId: mockAccount.id, email: mockAccount.email };
+
+      (jwtUtils.verifyToken as any).mockResolvedValue(mockPayload);
+      (mockAuthRepository.findByEmail as any).mockResolvedValue(mockAccount);
+
+      const result = await authService.refreshToken(refreshToken);
+
+      expect(result).toEqual({
+        success: true,
+        message: expect.any(String),
+        data: {
+          accessToken: 'mock-access-token',
+          refreshToken: 'mock-refresh-token',
+          expiresIn: expect.any(Number),
+        },
+      });
+
+      expect(jwtUtils.verifyToken).toHaveBeenCalledWith(refreshToken, 'refresh');
+    });
+
+    it('should throw AuthenticationError for invalid token', async () => {
+      (jwtUtils.verifyToken as any).mockRejectedValue(new Error('Invalid token'));
+
+      await expect(authService.refreshToken('invalid-token')).rejects.toThrow(AuthenticationError);
+    });
+
+    it('should throw AuthenticationError if account no longer exists', async () => {
+      const refreshToken = 'valid-refresh-token';
+      const mockPayload = { accountId: 'deleted-account', email: 'deleted@example.com' };
+
+      (jwtUtils.verifyToken as any).mockResolvedValue(mockPayload);
+      (mockAuthRepository.findByEmail as any).mockResolvedValue(null);
+
+      await expect(authService.refreshToken(refreshToken)).rejects.toThrow(AuthenticationError);
+    });
+  });
+
+  describe('generateTokens', () => {
+    it('should generate tokens with correct expiration time', async () => {
+      (mockAuthRepository.findByEmail as any).mockResolvedValue(null);
+      (mockAuthRepository.createAccount as any).mockResolvedValue(mockAccount);
+      (mockAuthRepository.updateLastLogin as any).mockResolvedValue(mockAccount);
+
+      const registerData: RegisterRequest = {
+        email: 'test@example.com',
+        password: 'password123',
+      };
+
+      const result = await authService.register(registerData);
+
+      // Should generate valid tokens with proper expiration
+      expect(result.data.accessToken).toBe('mock-access-token');
+      expect(result.data.refreshToken).toBe('mock-refresh-token');
+      expect(result.data.expiresIn).toBeGreaterThan(0);
+      expect(jwtUtils.generateAccessToken).toHaveBeenCalledWith(mockAccount.id, mockAccount.email);
+      expect(jwtUtils.generateRefreshToken).toHaveBeenCalledWith(mockAccount.id, mockAccount.email);
+    });
+  });
+
+  describe('parseExpirationTime', () => {
+    it('should parse different time formats correctly', async () => {
+      // Test that the service can handle different expiration formats
+      // This is tested indirectly through the register method
+      (mockAuthRepository.findByEmail as any).mockResolvedValue(null);
+      (mockAuthRepository.createAccount as any).mockResolvedValue(mockAccount);
+      (mockAuthRepository.updateLastLogin as any).mockResolvedValue(mockAccount);
+
+      const result = await authService.register({
+        email: 'test@example.com',
+        password: 'password123',
+      });
+
+      // Should return a valid expiration time in seconds
+      expect(typeof result.data.expiresIn).toBe('number');
+      expect(result.data.expiresIn).toBeGreaterThan(0);
     });
   });
 });

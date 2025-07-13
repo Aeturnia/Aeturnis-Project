@@ -1,42 +1,34 @@
-export interface AuthCredentials {
+/**
+ * JWT payload interface for authentication tokens
+ */
+export interface JWTPayload {
+  accountId: string;
   email: string;
-  password: string;
+  iat?: number;  // Issued at
+  exp?: number;  // Expiration time
 }
 
+/**
+ * JWT token types
+ */
+export enum TokenType {
+  ACCESS = 'access',
+  REFRESH = 'refresh',
+}
+
+/**
+ * Token generation options
+ */
+export interface TokenOptions {
+  expiresIn?: string | number;
+  audience?: string;
+  issuer?: string;
+}
+
+/**
+ * Registration request interface
+ */
 export interface RegisterRequest {
   email: string;
   password: string;
-  confirmPassword: string;
-}
-
-export interface LoginRequest {
-  email: string;
-  password: string;
-}
-
-export interface AuthResponse {
-  token: string;
-  user: {
-    id: string;
-    email: string;
-    createdAt: Date;
-    lastLoginAt?: Date;
-  };
-}
-
-export interface JWTPayload {
-  userId: string;
-  email: string;
-  iat: number;
-  exp: number;
-}
-
-export interface PasswordResetRequest {
-  email: string;
-}
-
-export interface PasswordResetConfirm {
-  token: string;
-  newPassword: string;
-  confirmPassword: string;
 }

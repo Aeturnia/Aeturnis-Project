@@ -6,6 +6,7 @@ import morgan from 'morgan';
 import { GAME_VERSION } from '@aeturnis/shared';
 import { HTTP_STATUS } from './utils/constants';
 import { errorHandler, errorLogger, notFoundHandler, defaultRateLimiter } from './middleware';
+import { securityConfig, apiSecurityHeaders } from './config/security.config';
 
 // Create Express application
 const app = express();
@@ -14,12 +15,24 @@ const PORT = process.env['PORT'] || 3000;
 // eslint-disable-next-line no-console
 console.log(`Aeturnis Online Server v${GAME_VERSION}`);
 
-// Global middleware
-app.use(helmet()); // Security headers
-app.use(cors()); // CORS configuration
-app.use(express.json()); // JSON body parser
-app.use(express.urlencoded({ extended: true })); // URL-encoded body parser
+// Security middleware (must be first)
+app.use(helmet(securityConfig.helmet)); // Security headers with custom config
+app.use(cors(securityConfig.cors)); // CORS with frontend origin
+
+// Body parsing middleware
+app.use(express.json({ limit: '10mb' })); // JSON body parser with size limit
+app.use(express.urlencoded({ extended: true, limit: '10mb' })); // URL-encoded parser
+
+// Logging middleware
 app.use(morgan('combined')); // Request logging
+
+// Custom security headers for API responses
+app.use((_req, res, next) => {
+  Object.entries(apiSecurityHeaders).forEach(([header, value]) => {
+    res.setHeader(header, value);
+  });
+  next();
+});
 
 // Apply default rate limiting to all routes
 app.use(defaultRateLimiter);

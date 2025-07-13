@@ -57,6 +57,7 @@ export const CHAT = {
 // Security constants
 export const SECURITY = {
   JWT_EXPIRES_IN: '24h',
+  JWT_REFRESH_EXPIRES_IN: '7d',
   PASSWORD_MIN_LENGTH: 8,
   MAX_LOGIN_ATTEMPTS: 5,
   LOCKOUT_DURATION_MINUTES: 15,
@@ -82,6 +83,10 @@ export const MESSAGES = {
     INVALID_CREDENTIALS: 'Invalid email or password',
     ACCOUNT_LOCKED: 'Account temporarily locked due to too many failed attempts',
     EMAIL_ALREADY_EXISTS: 'Email already registered',
+    TOKEN_EXPIRED: 'Token has expired',
+    TOKEN_INVALID: 'Invalid token',
+    TOKEN_REQUIRED: 'Authentication token required',
+    REFRESH_SUCCESS: 'Token refreshed successfully',
   },
   CHARACTER: {
     CREATED: 'Character created successfully',

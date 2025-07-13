@@ -1,6 +1,7 @@
 import { PrismaClient } from '@prisma/client';
 import {
   AccountRepository,
+  AuthRepository,
   CharacterRepository,
   BankAccountRepository,
   TransactionRepository,
@@ -26,6 +27,7 @@ export class Container {
 
   // Repositories
   private accountRepository!: AccountRepository;
+  private authRepository!: AuthRepository;
   private characterRepository!: CharacterRepository;
   private bankAccountRepository!: BankAccountRepository;
   private transactionRepository!: TransactionRepository;
@@ -61,6 +63,7 @@ export class Container {
    */
   private initializeRepositories(): void {
     this.accountRepository = new AccountRepository(this.prisma);
+    this.authRepository = new AuthRepository(this.prisma);
     this.characterRepository = new CharacterRepository(this.prisma);
     this.bankAccountRepository = new BankAccountRepository(this.prisma);
     this.transactionRepository = new TransactionRepository(this.prisma);
@@ -72,7 +75,7 @@ export class Container {
    * Initialize all services with their dependencies
    */
   private initializeServices(): void {
-    this.authService = new AuthService(this.accountRepository);
+    this.authService = new AuthService(this.authRepository);
 
     this.bankingService = new BankingService(
       this.bankAccountRepository,
@@ -98,6 +101,10 @@ export class Container {
   // Repository getters
   getAccountRepository(): AccountRepository {
     return this.accountRepository;
+  }
+
+  getAuthRepository(): AuthRepository {
+    return this.authRepository;
   }
 
   getCharacterRepository(): CharacterRepository {
