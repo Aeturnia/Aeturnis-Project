@@ -1,6 +1,7 @@
 // @aeturnis/server - Main server entry point
 import { GAME_VERSION } from '@aeturnis/shared';
 
+// eslint-disable-next-line no-console
 console.log(`Aeturnis Online Server v${GAME_VERSION}`);
 
 // TODO(claude): Initialize Express server
