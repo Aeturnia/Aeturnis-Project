@@ -15,27 +15,27 @@ gantt
     title Aeturnis Online Development Timeline
     dateFormat YYYY-MM-DD
     section Phase 1 (MVP)
-    Foundation (6/6)          :done, 2025-07-08, 2025-07-13
-    Banking & Death (0/3)     :active, 2025-07-15, 2025-07-21
-    Core Systems (0/3)        :2025-07-22, 2025-07-28
-    Combat & Items (0/6)      :2025-07-29, 2025-08-11
-    World & NPCs (0/8)        :2025-08-12, 2025-08-25
-    Social & Polish (0/6)     :2025-08-26, 2025-08-30
+    Foundation (6/8)          :done, 2025-07-08, 2025-07-21
+    Account & Character (0/3) :2025-07-22, 2025-07-28
+    Items & Combat (0/6)      :2025-07-29, 2025-08-11
+    NPCs & Economy (0/5)      :2025-08-12, 2025-08-25
+    World & Social (0/8)      :2025-08-26, 2025-09-15
+    Admin & Polish (0/4)      :2025-09-16, 2025-09-30
     section Phase 2 (Alpha)
-    Group Content             :2025-09-01, 2025-09-14
-    PvP & Economy            :2025-09-15, 2025-09-30
-    Advanced Systems         :2025-10-01, 2025-10-31
+    Group Content             :2025-10-01, 2025-10-14
+    PvP & Economy            :2025-10-15, 2025-10-31
+    Advanced Systems         :2025-11-01, 2025-11-30
     section Phase 3 (Beta)
-    Endgame Content          :2025-11-01, 2025-11-30
-    Social & Economy         :2025-12-01, 2025-12-31
-    Polish & Launch Prep     :2026-01-01, 2026-01-31
+    Endgame Content          :2025-12-01, 2025-12-31
+    Social & Economy         :2026-01-01, 2026-01-31
+    Polish & Launch Prep     :2026-02-01, 2026-02-28
     section Release
-    Launch                   :milestone, 2026-02-01, 0d
+    Launch                   :milestone, 2026-03-01, 0d
 ```
 
 ---
 
-## 🎮 Phase 1: MVP Development (July - August 2025)
+## 🎮 Phase 1: MVP Development (July - September 2025)
 
 ### ✅ Completed Systems (18.8%)
 
@@ -45,33 +45,33 @@ gantt
 | 🏛️ Core Architecture | Services, DI, Event System | ![100%](https://progress-bar.dev/100) |
 | 🔐 Security & Auth   | JWT, Rate Limiting, Helmet | ![100%](https://progress-bar.dev/100) |
 
-### 🔄 Current Sprint (July 15-21)
+### 🔄 Current Sprint (July 15-21) - Following Implementation Plan v5.0
 
-| System             | Feature                     | Priority    | Progress                          |
-| ------------------ | --------------------------- | ----------- | --------------------------------- |
-| 🏦 Banking Service | Gold storage, bank tabs     | 🔴 Critical | ![0%](https://progress-bar.dev/0) |
-| 💀 Death & Respawn | Death penalties, graveyards | 🔴 Critical | ![0%](https://progress-bar.dev/0) |
-| 👤 Account Mgmt    | Character slots, profiles   | 🟡 High     | ![0%](https://progress-bar.dev/0) |
+| System                  | Feature                     | Priority     | Progress                          |
+| ----------------------- | --------------------------- | ------------ | --------------------------------- |
+| 📊 Monitoring & Logging | Metrics, error tracking     | 🟢 Next      | ![0%](https://progress-bar.dev/0) |
+| 🚀 Cache & Performance  | Multi-tier caching, preload | 🟢 Next      | ![0%](https://progress-bar.dev/0) |
+| 👤 Account Management   | Multi-character, GDPR       | 🟡 Following | ![0%](https://progress-bar.dev/0) |
 
-### ⏳ Upcoming Systems
+### ⏳ Upcoming Systems (Implementation Plan Order)
 
-| Timeline         | Systems                     | Key Features                         |
-| ---------------- | --------------------------- | ------------------------------------ |
-| **Week 4 July**  | 📊 Monitoring, 🗂️ Character | Metrics, logging, character creation |
-| **Week 1 Aug**   | ⚔️ Combat, 💫 Skills        | Real-time battles, class abilities   |
-| **Week 2 Aug**   | 🎒 Items, ⚔️ Equipment      | Inventory, 15 equipment slots        |
-| **Week 3 Aug**   | 🤖 NPCs, 🏪 Shops           | Vendors, AI, consumables             |
-| **Week 4 Aug**   | 🗺️ Zones, 💬 Chat           | World navigation, 4 chat channels    |
-| **Final Sprint** | 🎓 Tutorial, ⚙️ Settings    | New player experience, leaderboards  |
+| Timeline        | Systems                | Key Features                        |
+| --------------- | ---------------------- | ----------------------------------- |
+| **Week 4 July** | 🎭 Character, 📈 Stats | Character creation, stat allocation |
+| **Week 1 Aug**  | 🎒 Items, ⚔️ Equipment | Item system, 15 equipment slots     |
+| **Week 2 Aug**  | ⚔️ Combat, 💫 Skills   | Real-time combat, skill trees       |
+| **Week 3 Aug**  | 🤖 NPCs, 💰 Loot       | AI behavior, loot tables            |
+| **Week 4 Aug**  | 🏦 Banking, 💀 Death   | Gold banking, death penalties       |
+| **Sept**        | 💬 Chat, 👥 Social     | 4 channels, friends, tutorials      |
 
 ---
 
-## 🧪 Phase 2: Alpha Testing (September - October 2025)
+## 🧪 Phase 2: Alpha Testing (October - November 2025)
 
 ### 🎯 Major Systems
 
-- **September**: Quest System, Party System, PvP Mechanics, Trading
-- **October**: Dungeons, World Events, Basic Guilds
+- **October**: Quest System, Party System, PvP Mechanics, Trading
+- **November**: Dungeons, World Events, Basic Guilds
 
 ### 🚀 Key Features
 
@@ -86,7 +86,7 @@ gantt
 
 ---
 
-## 🎯 Phase 3: Beta Testing (November 2025 - January 2026)
+## 🎯 Phase 3: Beta Testing (December 2025 - February 2026)
 
 ### 📊 Content Goals
 
@@ -99,13 +99,13 @@ gantt
 
 | Month        | Systems              | Description                           |
 | ------------ | -------------------- | ------------------------------------- |
-| **November** | Endgame Content      | 🏆 Achievements, 💎 Gems, 🔨 Crafting |
-| **December** | Social & Economy     | 🏛️ Clans, 🏰 Kingdoms, 🏠 Housing     |
-| **January**  | Polish & Launch Prep | 🤖 AI NPCs, 💑 Marriage, 🐕 Pets      |
+| **December** | Endgame Content      | 🏆 Achievements, 💎 Gems, 🔨 Crafting |
+| **January**  | Social & Economy     | 🏛️ Clans, 🏰 Kingdoms, 🏠 Housing     |
+| **February** | Polish & Launch Prep | 🤖 AI NPCs, 💑 Marriage, 🐕 Pets      |
 
 ---
 
-## 🚀 Release (February 1, 2026)
+## 🚀 Release (March 1, 2026)
 
 ### 🎁 Launch Features
 
@@ -126,7 +126,7 @@ gantt
 
 | Metric         | Current | Target | Status         |
 | -------------- | ------- | ------ | -------------- |
-| Systems/Day    | 3.0     | 0.54   | 🟢 5.5x        |
+| Systems/Day    | 3.0     | 0.33   | 🟢 9x          |
 | Test Coverage  | 91%+    | 90%    | 🟢 Exceeding   |
 | CI Success     | 100%    | 95%+   | 🟢 Exceeding   |
 | MVP Completion | 18.8%   | 100%   | 🟡 On Schedule |
@@ -135,83 +135,85 @@ gantt
 
 ### 📊 Progress Tracking
 
-**Phase 1 MVP (32 systems total)**
+**Phase 1 MVP (32+ systems total)**
 
-- ✅ Infrastructure: 6/6 systems (100%)
-- 🔄 Core Game: 0/26 systems (0%)
+- ✅ Infrastructure: 6/8 systems (75%)
+- 🔄 Core Game: 0/24+ systems (0%)
 
 **Overall Progress**: ![19%](https://progress-bar.dev/19/?title=MVP)
 
 ---
 
-## 🏛️ Version Roadmap
+## 🏛️ Version Roadmap (Following Implementation Plan v5.0)
 
-| Version | Codename | Release Date | Key Systems                      |
-| ------- | -------- | ------------ | -------------------------------- |
-| v1.0.0  | Jörmun   | ✅ Jul 13    | Foundation & Infrastructure      |
-| v1.1.0  | Fenrir   | Jul 21       | Banking, Death, Accounts         |
-| v1.2.0  | Týr      | Jul 28       | Monitoring, Character Creation   |
-| v1.3.0  | Odin     | Aug 4        | Stats, Combat, Skills            |
-| v1.4.0  | Thor     | Aug 11       | Items, Equipment, Inventory      |
-| v1.5.0  | Loki     | Aug 18       | NPCs, AI, Loot, Shops            |
-| v1.6.0  | Freya    | Aug 25       | Zones, Travel, Chat, Friends     |
-| v1.7.0  | Heimdall | Aug 30       | Tutorial, Settings, Leaderboards |
-| v2.0.0  | Ragnarök | Aug 30       | MVP Complete (32 systems)        |
+| Version | Codename | Release Date | Key Systems                 |
+| ------- | -------- | ------------ | --------------------------- |
+| v1.0.0  | Jörmun   | ✅ Jul 13    | Foundation & Infrastructure |
+| v1.1.0  | Fenrir   | Jul 21       | Monitoring, Cache, Account  |
+| v1.2.0  | Týr      | Jul 28       | Character Systems           |
+| v1.3.0  | Odin     | Aug 4        | Items & Equipment           |
+| v1.4.0  | Thor     | Aug 11       | Combat & Skills             |
+| v1.5.0  | Loki     | Aug 18       | NPCs, AI, Loot, Economy     |
+| v1.6.0  | Freya    | Aug 25       | Banking, Death, Zones       |
+| v1.7.0  | Heimdall | Sep 8        | Chat & Social               |
+| v1.8.0  | Baldur   | Sep 22       | Admin & Anti-Cheat          |
+| v2.0.0  | Ragnarök | Sep 30       | MVP Complete                |
 
 ---
 
-## ⚡ Critical Path
+## ⚡ Critical Path (Implementation Plan v5.0)
 
 ```mermaid
 graph TD
-    A[Banking System] --> B[Death System]
-    C[Account Management] --> D[Character Creation]
-    D --> E[Stats & Progression]
-    F[Combat Engine] --> G[NPCs & AI]
-    H[Item System] --> I[Equipment]
-    I --> J[Inventory]
-    K[Zone System] --> L[Travel System]
-    M[Chat System] --> N[Social Features]
+    A[Foundation & Infrastructure] --> B[Account & Character]
+    B --> C[Items & Equipment]
+    C --> D[Combat System]
+    D --> E[NPCs & AI]
+    E --> F[Loot & Economy]
+    F --> G[Banking & Death]
+    E --> H[Zone System]
+    G --> H
+    B --> I[Chat System]
+    I --> J[Social Features]
 ```
+
+**Important**: Banking is NOT an early priority. It requires:
+
+- Loot system to generate gold
+- Economy foundation for currency
+- Item system for item banking
 
 ---
 
-## 📊 Phase 1 System Breakdown (32 Total)
+## 📊 Phase 1 System Breakdown (32+ Total)
 
-### Infrastructure (6/6 ✅)
+### Infrastructure (8 systems - 6/8 ✅)
 
-- [P1-S1-C] Package Management Setup ✅
+- [P1-S1-C] Package Management ✅
 - [P1-S1-A] GitHub Actions CI ✅
-- [P1-S1-B] Initial DB Schema & Migrations ✅
-- [Coverage] Test Coverage Enhancement ✅
+- [P1-S1-B] DB Schema & Migrations ✅
+- [Coverage] Test Coverage ✅
 - [P1-S1-1] Core Architecture ✅
 - [P1-S1-2] Security & Auth ✅
+- [P1-S1-3] Monitoring & Logging ⏳
+- [P1-S1-4] Cache & Performance ⏳
 
-### Remaining Systems (0/26 ⏳)
+### Core Game Systems (24+ remaining)
 
-- [P1-S1-3] Monitoring & Logging
-- [P1-S1-4] Cache & Performance
-- [P1-S2-1] Account Management
-- [P1-S2-2] Character Creation
-- [P1-S2-3] Stats & Progression
-- [P1-S3-1] Item System
-- [P1-S3-2] Equipment Service
-- [P1-S3-3] Inventory Management
-- [P1-S4-1] Core Combat Engine
-- [P1-S4-2] Skill System
-- [P1-S5-1] NPC System
-- [P1-S5-2] Basic AI Service
-- [P1-S6-1] Loot System
-- [P1-S6-2] Shop System
-- [P1-S7-1] Banking Service 🔴
-- [P1-S7-2] Death & Respawn 🔴
-- [P1-S8-1] Zone Service
-- [P1-S8-2] Travel System
-- [P1-S9-1] Complete Chat System
-- [P1-S10-1] Friend System
-- [P1-S11-1] Tutorial System
-- [P1-S12-1] Settings Management
-- [P1-S15-1] Leaderboard Service
+Following Implementation Plan v5.0 order:
+
+- Account & Character (3)
+- Items & Equipment (3)
+- Combat & Skills (3)
+- NPCs & AI (2)
+- Loot & Economy (3)
+- Banking & Death (2) ← Late in order
+- Zones & World (2)
+- Communication (2)
+- Social (2)
+- Tutorial & Support (2)
+- Administration (3)
+- Competitive (1)
 
 ---
 
@@ -229,12 +231,12 @@ graph TD
 
 <div align="center">
 
-| Risk           | Impact            | Mitigation                          |
-| -------------- | ----------------- | ----------------------------------- |
-| Velocity Drop  | Delayed MVP       | 5.5x buffer, can drop to 1/day      |
-| Technical Debt | Quality Issues    | 90%+ test coverage requirement      |
-| Scope Creep    | Timeline Slip     | Strict MVP feature set (32 systems) |
-| Dependencies   | Blocking Progress | Critical path identified            |
+| Risk           | Impact            | Mitigation                         |
+| -------------- | ----------------- | ---------------------------------- |
+| Velocity Drop  | Delayed MVP       | 9x buffer, can drop to 0.33/day    |
+| Wrong Order    | Breaking Changes  | Following Implementation Plan v5.0 |
+| Technical Debt | Quality Issues    | 90%+ test coverage requirement     |
+| Dependencies   | Blocking Progress | Clear dependency chain established |
 
 </div>
 
@@ -242,9 +244,8 @@ graph TD
 
 <div align="center">
 
-**Current Focus: Banking & Death Systems** 💀🏦
+**Current Focus: Monitoring & Logging System** 📊🔍
 
-_"Death comes for all who venture unprepared. Bank your gold or lose it
-forever."_
+_"Following the Implementation Plan v5.0 to ensure proper system dependencies"_
 
 </div>
