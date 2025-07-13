@@ -15,7 +15,7 @@ describe('BankAccount Model CRUD', () => {
 
     const account = await prisma.account.create({
       data: {
-        email: 'bank-test@example.com',
+        email: `bank-test-${Date.now()}@example.com`,
         hashedPassword: 'hash',
       },
     });
@@ -23,7 +23,7 @@ describe('BankAccount Model CRUD', () => {
     const character = await prisma.character.create({
       data: {
         accountId: account.id,
-        name: 'BankTestHero',
+        name: `BankTestHero-${Date.now()}`,
         gold: 1000,
       },
     });
@@ -62,7 +62,7 @@ describe('BankAccount Model CRUD', () => {
 
     expect(found).toBeDefined();
     expect(found?.balance).toBe(10000);
-    expect(found?.character.name).toBe('BankTestHero');
+    expect(found?.character.name).toContain('BankTestHero-');
   });
 
   it('should update bank balance', async () => {

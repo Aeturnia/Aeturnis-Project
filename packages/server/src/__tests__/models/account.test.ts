@@ -14,22 +14,24 @@ describe('Account Model CRUD', () => {
     const hashedPassword = await bcrypt.hash('password123', 10);
     const account = await prisma.account.create({
       data: {
-        email: 'test@example.com',
+        email: `test-${Date.now()}@example.com`,
         hashedPassword,
       },
     });
 
     expect(account).toBeDefined();
     expect(account.id).toBeDefined();
-    expect(account.email).toBe('test@example.com');
+    expect(account.email).toContain('test-');
+    expect(account.email).toContain('@example.com');
     expect(account.isActive).toBe(true);
     expect(account.createdAt).toBeInstanceOf(Date);
   });
 
   it('should read an account by id', async () => {
+    const email = `read-${Date.now()}@example.com`;
     const created = await prisma.account.create({
       data: {
-        email: 'read@example.com',
+        email,
         hashedPassword: 'hash',
       },
     });
@@ -39,13 +41,13 @@ describe('Account Model CRUD', () => {
     });
 
     expect(found).toBeDefined();
-    expect(found?.email).toBe('read@example.com');
+    expect(found?.email).toBe(email);
   });
 
   it('should update an account', async () => {
     const account = await prisma.account.create({
       data: {
-        email: 'update@example.com',
+        email: `update-${Date.now()}@example.com`,
         hashedPassword: 'hash',
       },
     });
@@ -65,7 +67,7 @@ describe('Account Model CRUD', () => {
   it('should delete an account', async () => {
     const account = await prisma.account.create({
       data: {
-        email: 'delete@example.com',
+        email: `delete-${Date.now()}@example.com`,
         hashedPassword: 'hash',
       },
     });
@@ -82,9 +84,10 @@ describe('Account Model CRUD', () => {
   });
 
   it('should enforce unique email constraint', async () => {
+    const uniqueEmail = `unique-${Date.now()}@example.com`;
     await prisma.account.create({
       data: {
-        email: 'unique@example.com',
+        email: uniqueEmail,
         hashedPassword: 'hash',
       },
     });
@@ -92,7 +95,7 @@ describe('Account Model CRUD', () => {
     await expect(
       prisma.account.create({
         data: {
-          email: 'unique@example.com',
+          email: uniqueEmail,
           hashedPassword: 'hash2',
         },
       })
@@ -100,18 +103,19 @@ describe('Account Model CRUD', () => {
   });
 
   it('should find accounts by email', async () => {
+    const email = `find-${Date.now()}@example.com`;
     await prisma.account.create({
       data: {
-        email: 'find@example.com',
+        email,
         hashedPassword: 'hash',
       },
     });
 
     const found = await prisma.account.findUnique({
-      where: { email: 'find@example.com' },
+      where: { email },
     });
 
     expect(found).toBeDefined();
-    expect(found?.email).toBe('find@example.com');
+    expect(found?.email).toBe(email);
   });
 });

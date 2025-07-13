@@ -14,7 +14,7 @@ describe('XpLedger Model CRUD', () => {
 
     const account = await prisma.account.create({
       data: {
-        email: 'xp-test@example.com',
+        email: `xp-test-${Date.now()}@example.com`,
         hashedPassword: 'hash',
       },
     });
@@ -22,7 +22,7 @@ describe('XpLedger Model CRUD', () => {
     const character = await prisma.character.create({
       data: {
         accountId: account.id,
-        name: 'XpTestHero',
+        name: `XpTestHero-${Date.now()}`,
         level: 5,
         experience: 5000,
       },
@@ -77,7 +77,7 @@ describe('XpLedger Model CRUD', () => {
     });
 
     expect(found).toBeDefined();
-    expect(found?.character.name).toBe('XpTestHero');
+    expect(found?.character.name).toContain('XpTestHero-');
   });
 
   it('should find all XP entries for a character', async () => {

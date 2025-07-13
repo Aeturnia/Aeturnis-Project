@@ -13,7 +13,7 @@ describe('Character Model CRUD', () => {
 
     const account = await prisma.account.create({
       data: {
-        email: 'character-test@example.com',
+        email: `character-test-${Date.now()}@example.com`,
         hashedPassword: 'hash',
       },
     });
@@ -24,7 +24,7 @@ describe('Character Model CRUD', () => {
     const character = await prisma.character.create({
       data: {
         accountId,
-        name: 'TestHero',
+        name: `TestHero-${Date.now()}`,
         level: 1,
         experience: 0,
         gold: 100,
@@ -34,7 +34,7 @@ describe('Character Model CRUD', () => {
 
     expect(character).toBeDefined();
     expect(character.id).toBeDefined();
-    expect(character.name).toBe('TestHero');
+    expect(character.name).toContain('TestHero-');
     expect(character.level).toBe(1);
     expect(character.gold).toBe(100);
     expect(character.alignment).toBe(0);
@@ -45,7 +45,7 @@ describe('Character Model CRUD', () => {
     const character = await prisma.character.create({
       data: {
         accountId,
-        name: 'ReadHero',
+        name: `ReadHero-${Date.now()}`,
         level: 5,
       },
     });
@@ -59,15 +59,15 @@ describe('Character Model CRUD', () => {
     });
 
     expect(found).toBeDefined();
-    expect(found?.name).toBe('ReadHero');
-    expect(found?.account.email).toBe('character-test@example.com');
+    expect(found?.name).toContain('ReadHero-');
+    expect(found?.account.email).toContain('character-test-');
   });
 
   it('should update character stats', async () => {
     const character = await prisma.character.create({
       data: {
         accountId,
-        name: 'UpdateHero',
+        name: `UpdateHero-${Date.now()}`,
         level: 1,
         experience: 0,
         gold: 100,
@@ -94,7 +94,7 @@ describe('Character Model CRUD', () => {
     const character = await prisma.character.create({
       data: {
         accountId,
-        name: 'DeleteHero',
+        name: `DeleteHero-${Date.now()}`,
       },
     });
 
@@ -107,10 +107,11 @@ describe('Character Model CRUD', () => {
   });
 
   it('should enforce unique character name', async () => {
+    const uniqueName = `UniqueName-${Date.now()}`;
     await prisma.character.create({
       data: {
         accountId,
-        name: 'UniqueName',
+        name: uniqueName,
       },
     });
 
@@ -118,7 +119,7 @@ describe('Character Model CRUD', () => {
       prisma.character.create({
         data: {
           accountId,
-          name: 'UniqueName',
+          name: uniqueName,
         },
       })
     ).rejects.toThrow();
@@ -127,9 +128,9 @@ describe('Character Model CRUD', () => {
   it('should find characters by account', async () => {
     await prisma.character.createMany({
       data: [
-        { accountId, name: 'Hero1' },
-        { accountId, name: 'Hero2' },
-        { accountId, name: 'Hero3' },
+        { accountId, name: `Hero1-${Date.now()}` },
+        { accountId, name: `Hero2-${Date.now() + 1}` },
+        { accountId, name: `Hero3-${Date.now() + 2}` },
       ],
     });
 
@@ -138,16 +139,17 @@ describe('Character Model CRUD', () => {
     });
 
     expect(characters).toHaveLength(3);
-    expect(characters.map((c) => c.name)).toContain('Hero1');
-    expect(characters.map((c) => c.name)).toContain('Hero2');
-    expect(characters.map((c) => c.name)).toContain('Hero3');
+    const names = characters.map((c) => c.name);
+    expect(names.some((n) => n.startsWith('Hero1-'))).toBe(true);
+    expect(names.some((n) => n.startsWith('Hero2-'))).toBe(true);
+    expect(names.some((n) => n.startsWith('Hero3-'))).toBe(true);
   });
 
   it('should enforce alignment bounds', async () => {
     const character = await prisma.character.create({
       data: {
         accountId,
-        name: 'AlignmentTest',
+        name: `AlignmentTest-${Date.now()}`,
         alignment: -1000,
       },
     });

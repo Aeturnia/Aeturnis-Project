@@ -14,7 +14,7 @@ describe('Transaction Model CRUD', () => {
 
     const account = await prisma.account.create({
       data: {
-        email: 'transaction-test@example.com',
+        email: `transaction-test-${Date.now()}@example.com`,
         hashedPassword: 'hash',
       },
     });
@@ -22,7 +22,7 @@ describe('Transaction Model CRUD', () => {
     const character = await prisma.character.create({
       data: {
         accountId: account.id,
-        name: 'TransactionTestHero',
+        name: `TransactionTestHero-${Date.now()}`,
       },
     });
 
@@ -93,7 +93,7 @@ describe('Transaction Model CRUD', () => {
     });
 
     expect(found).toBeDefined();
-    expect(found?.character.name).toBe('TransactionTestHero');
+    expect(found?.character.name).toContain('TransactionTestHero-');
   });
 
   it('should find all transactions for a character', async () => {

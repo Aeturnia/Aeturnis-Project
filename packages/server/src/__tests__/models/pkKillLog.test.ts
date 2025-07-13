@@ -15,7 +15,7 @@ describe('PkKillLog Model CRUD', () => {
 
     const account = await prisma.account.create({
       data: {
-        email: 'pk-test@example.com',
+        email: `pk-test-${Date.now()}@example.com`,
         hashedPassword: 'hash',
       },
     });
@@ -23,7 +23,7 @@ describe('PkKillLog Model CRUD', () => {
     const killer = await prisma.character.create({
       data: {
         accountId: account.id,
-        name: 'PKKiller',
+        name: `PKKiller-${Date.now()}`,
         level: 10,
         alignment: -500,
       },
@@ -32,7 +32,7 @@ describe('PkKillLog Model CRUD', () => {
     const victim = await prisma.character.create({
       data: {
         accountId: account.id,
-        name: 'PKVictim',
+        name: `PKVictim-${Date.now() + 1}`,
         level: 8,
         alignment: 300,
       },
@@ -77,8 +77,8 @@ describe('PkKillLog Model CRUD', () => {
     });
 
     expect(found).toBeDefined();
-    expect(found?.killer.name).toBe('PKKiller');
-    expect(found?.victim.name).toBe('PKVictim');
+    expect(found?.killer.name).toContain('PKKiller-');
+    expect(found?.victim.name).toContain('PKVictim-');
   });
 
   it('should find kills by killer', async () => {
@@ -86,7 +86,7 @@ describe('PkKillLog Model CRUD', () => {
     const victim2 = await prisma.character.create({
       data: {
         accountId: (await prisma.account.findFirst())!.id,
-        name: 'PKVictim2',
+        name: `PKVictim2-${Date.now()}`,
       },
     });
 
@@ -117,7 +117,7 @@ describe('PkKillLog Model CRUD', () => {
     const killer2 = await prisma.character.create({
       data: {
         accountId: (await prisma.account.findFirst())!.id,
-        name: 'PKKiller2',
+        name: `PKKiller2-${Date.now()}`,
       },
     });
 

@@ -1,5 +1,10 @@
 import { beforeAll, afterAll, afterEach } from 'vitest';
 import { PrismaClient } from '@prisma/client';
+import * as dotenv from 'dotenv';
+import { resolve } from 'path';
+
+// Load .env file from root directory
+dotenv.config({ path: resolve(__dirname, '../../../.env') });
 
 const prisma = new PrismaClient();
 
