@@ -1,141 +1,119 @@
 import { Router } from 'express';
-import { z } from 'zod';
-import { authenticateToken, authRateLimiter, validate, asyncHandler } from '../middleware';
-import { SECURITY } from '../utils/constants';
+import { AuthController } from '../controllers/auth.controller';
+import {
+  authenticateToken,
+  authRateLimit,
+  generalRateLimit,
+  zodValidator,
+  asyncHandler,
+} from '../middleware';
+import {
+  registerSchema,
+  loginSchema,
+  refreshTokenSchema,
+  updateProfileSchema,
+  passwordRecoverySchema,
+} from '../types/auth.schemas';
 
 // Create router instance
 const router = Router();
 
-// Validation schemas
-const registerSchema = z
-  .object({
-    email: z.string().email(),
-    password: z.string().min(SECURITY.PASSWORD_MIN_LENGTH),
-    confirmPassword: z.string(),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords don't match",
-    path: ['confirmPassword'],
-  });
-
-const loginSchema = z.object({
-  email: z.string().email(),
-  password: z.string(),
-});
-
-const updateProfileSchema = z.object({
-  email: z.string().email().optional(),
-  currentPassword: z.string().optional(),
-  newPassword: z.string().min(SECURITY.PASSWORD_MIN_LENGTH).optional(),
-});
+// Initialize controller
+const authController = new AuthController();
 
 /**
  * POST /api/v1/auth/register
- * Register a new account
+ * Register a new user account
+ * Rate limited to prevent spam registration
  */
 router.post(
   '/register',
-  authRateLimiter, // Apply strict rate limiting for auth endpoints
-  validate(registerSchema), // Validate request body
+  authRateLimit, // Strict rate limiting for auth endpoints
+  zodValidator(registerSchema, 'body'), // Validate registration data
   asyncHandler(async (req, res) => {
-    // TODO(claude): Implement registration logic
-    res.status(201).json({
-      success: true,
-      message: 'Registration endpoint - TODO',
-      data: {
-        email: req.body.email,
-      },
-    });
+    await authController.register(req, res);
   })
 );
 
 /**
  * POST /api/v1/auth/login
- * Login to existing account
+ * Authenticate user login
+ * Rate limited to prevent brute force attacks
  */
 router.post(
   '/login',
-  authRateLimiter, // Apply strict rate limiting
-  validate(loginSchema), // Validate request body
+  authRateLimit, // Strict rate limiting for auth endpoints
+  zodValidator(loginSchema, 'body'), // Validate login credentials
   asyncHandler(async (req, res) => {
-    // TODO(claude): Implement login logic
-    // 1. Verify credentials
-    // 2. Generate JWT token
-    // 3. Return token and user data
-    res.json({
-      success: true,
-      message: 'Login endpoint - TODO',
-      data: {
-        token: 'jwt-token-here',
-        user: {
-          email: req.body.email,
-        },
-      },
-    });
+    await authController.login(req, res);
+  })
+);
+
+/**
+ * POST /api/v1/auth/refresh
+ * Refresh access token using refresh token
+ * Rate limited but less strict than login
+ */
+router.post(
+  '/refresh',
+  generalRateLimit, // General rate limiting
+  zodValidator(refreshTokenSchema, 'body'), // Validate refresh token
+  asyncHandler(async (req, res) => {
+    await authController.refreshToken(req, res);
   })
 );
 
 /**
  * POST /api/v1/auth/logout
  * Logout current session
+ * Requires authentication
  */
 router.post(
   '/logout',
-  authenticateToken, // Require authentication
+  authenticateToken, // Require valid JWT token
   asyncHandler(async (req, res) => {
-    // TODO(claude): Implement logout logic
-    // 1. Invalidate token (if using token blacklist)
-    // 2. Clear any server-side session data
-    res.json({
-      success: true,
-      message: 'Logout successful',
-      data: {
-        accountId: req.user?.accountId,
-      },
-    });
+    await authController.logout(req, res);
   })
 );
 
 /**
  * GET /api/v1/auth/profile
  * Get current user profile
+ * Requires authentication
  */
 router.get(
   '/profile',
-  authenticateToken, // Require authentication
+  authenticateToken, // Require valid JWT token
   asyncHandler(async (req, res) => {
-    // TODO(claude): Fetch user profile from database
-    res.json({
-      success: true,
-      data: {
-        accountId: req.user?.accountId,
-        email: req.user?.email,
-        // TODO(claude): Add more profile data
-      },
-    });
+    await authController.getProfile(req, res);
   })
 );
 
 /**
  * PUT /api/v1/auth/profile
  * Update user profile
+ * Requires authentication and validation
  */
 router.put(
   '/profile',
-  authenticateToken, // Require authentication
-  validate(updateProfileSchema), // Validate request body
+  authenticateToken, // Require valid JWT token
+  zodValidator(updateProfileSchema, 'body'), // Validate profile updates
   asyncHandler(async (req, res) => {
-    // TODO(claude): Implement profile update logic
-    // 1. Validate current password if changing password
-    // 2. Update profile in database
-    // 3. Return updated profile
-    res.json({
-      success: true,
-      message: 'Profile update endpoint - TODO',
-      data: {
-        accountId: req.user?.accountId,
-      },
-    });
+    await authController.updateProfile(req, res);
+  })
+);
+
+/**
+ * POST /api/v1/auth/recover
+ * Request password recovery
+ * Rate limited to prevent abuse
+ */
+router.post(
+  '/recover',
+  authRateLimit, // Strict rate limiting
+  zodValidator(passwordRecoverySchema, 'body'), // Validate email
+  asyncHandler(async (req, res) => {
+    await authController.recoverPassword(req, res);
   })
 );
 

@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
-import jwt from 'jsonwebtoken';
-import { HTTP_STATUS, MESSAGES, SECURITY } from '../utils/constants';
+import { HTTP_STATUS, MESSAGES } from '../utils/constants';
+import { verifyToken, extractBearerToken } from '../utils/jwt';
 
 // Extend Express Request to include user data
 declare module 'express-serve-static-core' {
@@ -8,61 +8,70 @@ declare module 'express-serve-static-core' {
     user?: {
       accountId: string;
       email: string;
-      // TODO(claude): Add more user properties as needed
+      iat?: number;
+      exp?: number;
     };
   }
-}
-
-export interface JwtPayload {
-  accountId: string;
-  email: string;
-  iat?: number;
-  exp?: number;
 }
 
 /**
  * JWT Authentication Middleware
  * Verifies JWT tokens from Authorization header and attaches user data to request
  */
-export const authenticateToken = (req: Request, res: Response, next: NextFunction): void => {
+export const authenticateToken = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
   try {
     // Extract token from Authorization header
-    const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1]; // Bearer TOKEN
+    const authHeader = req.headers.authorization;
+    const token = extractBearerToken(authHeader);
 
     if (!token) {
       res.status(HTTP_STATUS.UNAUTHORIZED).json({
         success: false,
         error: MESSAGES.GENERAL.UNAUTHORIZED,
+        details: 'No token provided',
       });
       return;
     }
 
-    // TODO(claude): Move JWT_SECRET to environment variable
-    const JWT_SECRET = process.env['JWT_SECRET'] || 'your-secret-key';
-
     // Verify token
-    jwt.verify(token, JWT_SECRET, (_err, decoded) => {
-      if (_err) {
-        // TODO(claude): Add more specific error handling (expired, invalid, etc.)
-        res.status(HTTP_STATUS.UNAUTHORIZED).json({
-          success: false,
-          error: MESSAGES.GENERAL.UNAUTHORIZED,
-        });
-        return;
-      }
-
+    try {
+      const payload = await verifyToken(token);
+      
       // Attach user data to request
-      const payload = decoded as JwtPayload;
       req.user = {
         accountId: payload.accountId,
         email: payload.email,
+        ...(payload.iat !== undefined && { iat: payload.iat }),
+        ...(payload.exp !== undefined && { exp: payload.exp }),
       };
 
       next();
-    });
-  } catch {
-    // TODO(claude): Add proper error logging
+    } catch (error: unknown) {
+      // Handle specific JWT errors
+      const errorMessage = MESSAGES.GENERAL.UNAUTHORIZED;
+      let details = 'Invalid token';
+
+      if (error instanceof Error) {
+        if (error.name === 'TokenExpiredError') {
+          details = 'Please login again to get a new token';
+        } else if (error.name === 'JsonWebTokenError') {
+          details = error.message;
+        }
+      }
+
+      res.status(HTTP_STATUS.UNAUTHORIZED).json({
+        success: false,
+        error: errorMessage,
+        details,
+      });
+      return;
+    }
+  } catch (error) {
+    console.error('Authentication middleware error:', error);
     res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
       success: false,
       error: MESSAGES.GENERAL.INTERNAL_ERROR,
@@ -75,48 +84,40 @@ export const authenticateToken = (req: Request, res: Response, next: NextFunctio
  * Allows requests to proceed even without a valid token
  * but still attaches user data if token is valid
  */
-export const optionalAuth = (req: Request, _res: Response, next: NextFunction): void => {
+export const optionalAuth = async (
+  req: Request,
+  _res: Response,
+  next: NextFunction
+): Promise<void> => {
   try {
-    const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1];
+    const authHeader = req.headers.authorization;
+    const token = extractBearerToken(authHeader);
 
     if (!token) {
       next();
       return;
     }
 
-    const JWT_SECRET = process.env['JWT_SECRET'] || 'your-secret-key';
+    try {
+      const payload = await verifyToken(token);
+      
+      // Attach user data to request if token is valid
+      req.user = {
+        accountId: payload.accountId,
+        email: payload.email,
+        ...(payload.iat !== undefined && { iat: payload.iat }),
+        ...(payload.exp !== undefined && { exp: payload.exp }),
+      };
+    } catch {
+      // Silently ignore invalid tokens for optional auth
+      // User data will simply not be attached
+    }
 
-    jwt.verify(token, JWT_SECRET, (_err, decoded) => {
-      if (!_err && decoded) {
-        const payload = decoded as JwtPayload;
-        req.user = {
-          accountId: payload.accountId,
-          email: payload.email,
-        };
-      }
-      // Continue regardless of token validity
-      next();
-    });
-  } catch {
-    // TODO(claude): Add proper error logging
+    // Continue regardless of token validity
+    next();
+  } catch (error) {
+    console.error('Optional auth middleware error:', error);
+    // Continue on errors for optional auth
     next();
   }
-};
-
-/**
- * Generate JWT token for authenticated user
- * TODO(claude): Move this to auth service
- */
-export const generateToken = (accountId: string, email: string): string => {
-  const JWT_SECRET = process.env['JWT_SECRET'] || 'your-secret-key';
-
-  const payload: JwtPayload = {
-    accountId,
-    email,
-  };
-
-  return jwt.sign(payload, JWT_SECRET, {
-    expiresIn: SECURITY.JWT_EXPIRES_IN,
-  });
 };

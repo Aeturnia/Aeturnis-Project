@@ -2,6 +2,18 @@ import { Request, Response } from 'express';
 import { AuthService } from '../services/auth.service';
 import { HTTP_STATUS, MESSAGES } from '../utils/constants';
 import { Container } from '../container';
+import {
+  RegisterRequest,
+  LoginRequest,
+  RefreshTokenRequest,
+  UpdateProfileRequest,
+  PasswordRecoveryRequest,
+} from '../types/auth.schemas';
+import {
+  AppError,
+  AuthenticationError,
+  ConflictError,
+} from '../middleware/error.middleware';
 
 export class AuthController {
   private authService: AuthService;
@@ -11,20 +23,25 @@ export class AuthController {
     this.authService = container.getAuthService();
   }
 
-  // POST /api/auth/register
+  /**
+   * POST /api/auth/register
+   * Register a new user account
+   */
   async register(req: Request, res: Response): Promise<void> {
     try {
-      // TODO(claude): Validate request body with Zod
-      const { email, password } = req.body;
+      const data = req.body as RegisterRequest;
+      const result = await this.authService.register(data);
 
-      const result = await this.authService.register(email, password);
-
-      res.status(HTTP_STATUS.CREATED).json({
-        success: true,
-        message: MESSAGES.AUTH.REGISTER_SUCCESS,
-        data: result,
-      });
+      res.status(HTTP_STATUS.CREATED).json(result);
     } catch (error) {
+      if (error instanceof ConflictError) {
+        res.status(error.statusCode).json({
+          success: false,
+          error: error.message,
+        });
+        return;
+      }
+      
       res.status(HTTP_STATUS.BAD_REQUEST).json({
         success: false,
         error: error instanceof Error ? error.message : MESSAGES.GENERAL.ERROR,
@@ -32,20 +49,25 @@ export class AuthController {
     }
   }
 
-  // POST /api/auth/login
+  /**
+   * POST /api/auth/login
+   * Authenticate user login
+   */
   async login(req: Request, res: Response): Promise<void> {
     try {
-      // TODO(claude): Validate request body with Zod
-      const { email, password } = req.body;
+      const data = req.body as LoginRequest;
+      const result = await this.authService.login(data);
 
-      const result = await this.authService.login(email, password);
-
-      res.status(HTTP_STATUS.OK).json({
-        success: true,
-        message: MESSAGES.AUTH.LOGIN_SUCCESS,
-        data: result,
-      });
+      res.status(HTTP_STATUS.OK).json(result);
     } catch (error) {
+      if (error instanceof AuthenticationError) {
+        res.status(error.statusCode).json({
+          success: false,
+          error: error.message,
+        });
+        return;
+      }
+      
       res.status(HTTP_STATUS.UNAUTHORIZED).json({
         success: false,
         error: error instanceof Error ? error.message : MESSAGES.AUTH.INVALID_CREDENTIALS,
@@ -53,19 +75,55 @@ export class AuthController {
     }
   }
 
-  // POST /api/auth/logout
-  async logout(_req: Request, res: Response): Promise<void> {
+  /**
+   * POST /api/auth/refresh
+   * Refresh access token using refresh token
+   */
+  async refreshToken(req: Request, res: Response): Promise<void> {
     try {
-      // TODO(claude): Extract userId from JWT token
-      const userId = 'placeholder';
+      const { refreshToken } = req.body as RefreshTokenRequest;
+      const result = await this.authService.refreshToken(refreshToken);
 
-      await this.authService.logout(userId);
-
-      res.status(HTTP_STATUS.OK).json({
-        success: true,
-        message: MESSAGES.AUTH.LOGOUT_SUCCESS,
-      });
+      res.status(HTTP_STATUS.OK).json(result);
     } catch (error) {
+      if (error instanceof AuthenticationError) {
+        res.status(error.statusCode).json({
+          success: false,
+          error: error.message,
+        });
+        return;
+      }
+      
+      res.status(HTTP_STATUS.UNAUTHORIZED).json({
+        success: false,
+        error: error instanceof Error ? error.message : MESSAGES.AUTH.TOKEN_INVALID,
+      });
+    }
+  }
+
+  /**
+   * POST /api/auth/logout
+   * Logout current session
+   */
+  async logout(req: Request, res: Response): Promise<void> {
+    try {
+      const userId = req.user?.accountId;
+      if (!userId) {
+        throw new AuthenticationError(MESSAGES.AUTH.TOKEN_REQUIRED);
+      }
+
+      const result = await this.authService.logout(userId);
+
+      res.status(HTTP_STATUS.OK).json(result);
+    } catch (error) {
+      if (error instanceof AppError) {
+        res.status(error.statusCode).json({
+          success: false,
+          error: error.message,
+        });
+        return;
+      }
+      
       res.status(HTTP_STATUS.BAD_REQUEST).json({
         success: false,
         error: error instanceof Error ? error.message : MESSAGES.GENERAL.ERROR,
@@ -73,19 +131,29 @@ export class AuthController {
     }
   }
 
-  // GET /api/auth/profile
-  async getProfile(_req: Request, res: Response): Promise<void> {
+  /**
+   * GET /api/auth/profile
+   * Get current user profile
+   */
+  async getProfile(req: Request, res: Response): Promise<void> {
     try {
-      // TODO(claude): Extract userId from JWT token
-      const userId = 'placeholder';
+      const userId = req.user?.accountId;
+      if (!userId) {
+        throw new AuthenticationError(MESSAGES.AUTH.TOKEN_REQUIRED);
+      }
 
       const profile = await this.authService.getProfile(userId);
 
-      res.status(HTTP_STATUS.OK).json({
-        success: true,
-        data: profile,
-      });
+      res.status(HTTP_STATUS.OK).json(profile);
     } catch (error) {
+      if (error instanceof AppError) {
+        res.status(error.statusCode).json({
+          success: false,
+          error: error.message,
+        });
+        return;
+      }
+      
       res.status(HTTP_STATUS.NOT_FOUND).json({
         success: false,
         error: error instanceof Error ? error.message : MESSAGES.GENERAL.NOT_FOUND,
@@ -93,22 +161,33 @@ export class AuthController {
     }
   }
 
-  // PUT /api/auth/profile
+  /**
+   * PUT /api/auth/profile
+   * Update user profile
+   */
   async updateProfile(req: Request, res: Response): Promise<void> {
     try {
-      // TODO(claude): Extract userId from JWT token
-      // TODO(claude): Validate request body with Zod
-      const userId = 'placeholder';
-      const updates = req.body;
+      const userId = req.user?.accountId;
+      if (!userId) {
+        throw new AuthenticationError(MESSAGES.AUTH.TOKEN_REQUIRED);
+      }
 
+      const updates = req.body as UpdateProfileRequest;
       const result = await this.authService.updateProfile(userId, updates);
 
       res.status(HTTP_STATUS.OK).json({
-        success: true,
+        ...result,
         message: MESSAGES.GENERAL.SUCCESS,
-        data: result,
       });
     } catch (error) {
+      if (error instanceof AppError) {
+        res.status(error.statusCode).json({
+          success: false,
+          error: error.message,
+        });
+        return;
+      }
+      
       res.status(HTTP_STATUS.BAD_REQUEST).json({
         success: false,
         error: error instanceof Error ? error.message : MESSAGES.GENERAL.ERROR,
@@ -116,18 +195,16 @@ export class AuthController {
     }
   }
 
-  // POST /api/auth/recover
+  /**
+   * POST /api/auth/recover
+   * Request password recovery
+   */
   async recoverPassword(req: Request, res: Response): Promise<void> {
     try {
-      // TODO(claude): Validate request body with Zod
-      const { email } = req.body;
+      const { email } = req.body as PasswordRecoveryRequest;
+      const result = await this.authService.recoverPassword(email);
 
-      await this.authService.recoverPassword(email);
-
-      res.status(HTTP_STATUS.OK).json({
-        success: true,
-        message: 'Password recovery email sent',
-      });
+      res.status(HTTP_STATUS.OK).json(result);
     } catch (error) {
       res.status(HTTP_STATUS.BAD_REQUEST).json({
         success: false,

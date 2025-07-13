@@ -16,7 +16,13 @@
       "Bash(pnpm add:*)",
       "Bash(pnpm run:*)",
       "Bash(pnpm --filter @aeturnis/server test --run)",
-      "Bash(pnpm vitest:*)"
+      "Bash(pnpm vitest:*)",
+      "Bash(ls:*)",
+      "Bash(npm run build:*)",
+      "Bash(npm test:*)",
+      "Bash(npm run typecheck:*)",
+      "Bash(npm run test:coverage:*)",
+      "Bash(npm run lint)"
     ],
     "deny": []
   }

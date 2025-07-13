@@ -6,6 +6,10 @@ export { BaseRepository } from './base.repository';
 export type { IAccountRepository } from './account.repository';
 export { AccountRepository } from './account.repository';
 
+// Auth repository exports
+export type { IAuthRepository } from './auth.repository';
+export { AuthRepository } from './auth.repository';
+
 // Character repository exports
 export type { ICharacterRepository } from './character.repository';
 export { CharacterRepository } from './character.repository';
