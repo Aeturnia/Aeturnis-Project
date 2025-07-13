@@ -1,6 +1,6 @@
 # DDERF Issues Log
 
-**Version**: 0.2.1  
+**Version**: 0.3.0  
 **Created**: 2025-07-12  
 **Last Updated**: 2025-07-13  
 **Purpose**: Centralized tracking of all Detect→Diagnose→Explain→Resolve→Fix
@@ -225,6 +225,73 @@ placeholders to restore coverage above 90%.
 
 [Pending implementation]
 
+### [DDERF-007] Missing @faker-js/faker Dependency
+
+- **Detected**: 2025-07-13 via CI test failures after factory helper
+  implementation
+- **Catalog Tag**: N/A
+- **Error Type**: TYPE-E (External Integration Failures)
+- **Severity**: High
+- **Status**: Open
+
+#### 1. Detect
+
+Test suite fails with error: "Failed to load url @faker-js/faker (resolved id:
+@faker-js/faker) in /packages/server/src/**tests**/helpers/factories.ts"
+
+#### 2. Diagnose
+
+The factory helper implementation imports @faker-js/faker but the package is not
+installed as a dependency in package.json.
+
+#### 3. Explain
+
+When implementing test factory helpers to fix DDERF-006, the @faker-js/faker
+library was used for generating test data but was not added to devDependencies.
+
+#### 4. Resolve
+
+Add @faker-js/faker to devDependencies in packages/server/package.json
+
+#### 5. Fix
+
+[Pending implementation]
+
+### [DDERF-008] Test Data Race Conditions
+
+- **Detected**: 2025-07-13 via test failures showing undefined values
+- **Catalog Tag**: N/A
+- **Error Type**: TYPE-D (Data Flow Problems)
+- **Severity**: Medium
+- **Status**: Open
+
+#### 1. Detect
+
+- Account test: "expected undefined to be 'read-1752417209895@example.com'"
+- Character test: "the given combination of arguments (undefined and string) is
+  invalid"
+
+#### 2. Diagnose
+
+Tests are experiencing race conditions where data is not properly isolated
+between test runs, causing lookups to return undefined.
+
+#### 3. Explain
+
+Despite cleanup in beforeEach/afterEach hooks, parallel test execution may be
+causing data conflicts when multiple tests try to create/read/delete data
+simultaneously.
+
+#### 4. Resolve
+
+1. Implement proper test isolation with database transactions
+2. Use unique identifiers for all test data
+3. Consider running tests serially or in isolated database schemas
+
+#### 5. Fix
+
+[Pending implementation]
+
 ### [DDERF-006] Test Data Foreign Key Constraint Violations
 
 - **Detected**: 2025-07-13 via CI pipeline failure after coverage threshold
@@ -298,6 +365,12 @@ tests ran after architecture changes.
   pattern (DDERF-008)
 - Coverage threshold temporarily lowered to 10% to unblock CI
 
+**Update 2025-07-13 (2)**:
+
+- New issue: Missing @faker-js/faker dependency causing test suite failures
+- Factory helper tests fail to load due to missing dependency
+- Some tests still showing race conditions in data setup
+
 ---
 
 ## Resolved Issues
@@ -336,13 +409,13 @@ Per DDERF methodology:
 
 ## Statistics
 
-- Total Issues: 6
-- Open: 3 (DDERF-002, DDERF-004, DDERF-005)
+- Total Issues: 8
+- Open: 5 (DDERF-002, DDERF-004, DDERF-005, DDERF-007, DDERF-008)
 - Partially Resolved: 1 (DDERF-006)
 - Resolved: 2 (DDERF-001, DDERF-003)
 - Critical: 0
-- High: 2 (DDERF-004, DDERF-006)
-- Medium: 2 (DDERF-002, DDERF-005)
+- High: 3 (DDERF-004, DDERF-006, DDERF-007)
+- Medium: 3 (DDERF-002, DDERF-005, DDERF-008)
 - Low: 0
 
 ---
