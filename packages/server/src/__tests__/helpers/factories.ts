@@ -153,6 +153,29 @@ export async function createPkKillLog(overrides?: {
 }
 
 /**
+ * Creates attacker and victim characters without creating a PK log
+ */
+export async function createPkKillLogSetup(overrides?: {
+  attacker?: Partial<{ name: string; level: number }>;
+  victim?: Partial<{ name: string; level: number }>;
+}) {
+  // Create attacker
+  const attackerData = await createAccountWithCharacter({
+    character: overrides?.attacker,
+  });
+
+  // Create victim
+  const victimData = await createAccountWithCharacter({
+    character: overrides?.victim,
+  });
+
+  return {
+    attacker: attackerData,
+    victim: victimData,
+  };
+}
+
+/**
  * Cleans up all test data (use in afterEach)
  * Enhanced with retry logic to handle race conditions
  */
@@ -188,6 +211,9 @@ export async function cleanupTestData(retries = 3) {
       await prisma.account.deleteMany().catch(() => {
         // Ignore errors - might not have any records
       });
+
+      // Force a small delay to ensure cleanup is complete
+      await new Promise((resolve) => setTimeout(resolve, 100));
 
       break; // Success, exit retry loop
     } catch (error) {

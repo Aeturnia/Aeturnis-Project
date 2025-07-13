@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest';
 import { prisma } from '@/lib/prisma';
-import { createPkKillLog } from '../helpers/factories';
+import { createPkKillLog, createPkKillLogSetup } from '../helpers/factories';
 
 describe('PkKillLog Model CRUD', () => {
   it('should create a PK kill log', async () => {
-    const { attacker, victim } = await createPkKillLog();
+    const { attacker, victim } = await createPkKillLogSetup();
 
     const pkLog = await prisma.pkKillLog.create({
       data: {
@@ -39,10 +39,19 @@ describe('PkKillLog Model CRUD', () => {
   });
 
   it('should find kills by killer', async () => {
-    const { attacker } = await createPkKillLog();
-    // Create a second victim instead of trying to reuse attacker
-    const { victim: victim2 } = await createPkKillLog();
+    const { attacker, victim } = await createPkKillLogSetup();
+    const { victim: victim2 } = await createPkKillLogSetup();
 
+    // Create first kill
+    await prisma.pkKillLog.create({
+      data: {
+        killerId: attacker.character.id,
+        victimId: victim.character.id,
+        zoneId: 'zone1',
+      },
+    });
+
+    // Create second kill
     await prisma.pkKillLog.create({
       data: {
         killerId: attacker.character.id,
@@ -59,10 +68,19 @@ describe('PkKillLog Model CRUD', () => {
   });
 
   it('should find deaths by victim', async () => {
-    const { victim } = await createPkKillLog();
-    // Create a second attacker instead of trying to reuse victim
-    const { attacker: killer2 } = await createPkKillLog();
+    const { attacker, victim } = await createPkKillLogSetup();
+    const { attacker: killer2 } = await createPkKillLogSetup();
 
+    // Create first death
+    await prisma.pkKillLog.create({
+      data: {
+        killerId: attacker.character.id,
+        victimId: victim.character.id,
+        zoneId: 'zone1',
+      },
+    });
+
+    // Create second death
     await prisma.pkKillLog.create({
       data: {
         killerId: killer2.character.id,
@@ -79,7 +97,7 @@ describe('PkKillLog Model CRUD', () => {
   });
 
   it('should find recent kills for cooldown check', async () => {
-    const { attacker, victim } = await createPkKillLog();
+    const { attacker, victim } = await createPkKillLogSetup();
     const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000);
     const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
 
@@ -121,7 +139,7 @@ describe('PkKillLog Model CRUD', () => {
       },
     });
 
-    expect(recentKills).toHaveLength(3); // Including the initial one from factory
+    expect(recentKills).toHaveLength(2); // The two recent kills
 
     // Find kills within last hour (for 6 kills/hour limit)
     const hourlyKills = await prisma.pkKillLog.findMany({
@@ -133,11 +151,11 @@ describe('PkKillLog Model CRUD', () => {
       },
     });
 
-    expect(hourlyKills).toHaveLength(4); // Including the initial one from factory
+    expect(hourlyKills).toHaveLength(3); // All three kills
   });
 
   it('should track kills by zone', async () => {
-    const { attacker, victim } = await createPkKillLog();
+    const { attacker, victim } = await createPkKillLogSetup();
 
     await prisma.pkKillLog.create({
       data: {
@@ -180,7 +198,7 @@ describe('PkKillLog Model CRUD', () => {
   });
 
   it('should order kills by timestamp', async () => {
-    const { attacker, victim } = await createPkKillLog();
+    const { attacker, victim } = await createPkKillLogSetup();
 
     const log1 = await prisma.pkKillLog.create({
       data: {
