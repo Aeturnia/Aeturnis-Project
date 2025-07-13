@@ -1,11 +1,11 @@
 import { z } from 'zod';
-import { 
-  zodValidator, 
-  zodValidatorMultiple, 
+import {
+  zodValidator,
+  zodValidatorMultiple,
   zodValidatorAsync,
   type ValidationTarget,
   type MultiTargetValidation,
-  type ValidationErrorResponse
+  type ValidationErrorResponse,
 } from './zodValidator.middleware';
 
 /**
@@ -24,7 +24,10 @@ export type { ValidationTarget, ValidationErrorResponse };
  * Legacy interface for backward compatibility
  * @deprecated Use MultiTargetValidation from zodValidator.middleware instead
  */
-export interface MultiValidationSchema extends MultiTargetValidation {}
+export interface MultiValidationSchema extends MultiTargetValidation {
+  // Legacy interface for backward compatibility - extending base functionality
+  readonly __deprecated?: true;
+}
 
 /**
  * Common validation schemas

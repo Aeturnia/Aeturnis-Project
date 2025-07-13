@@ -11,9 +11,9 @@ export interface IAuthRepository {
   updatePassword(accountId: string, hashedPassword: string): Promise<Account>;
   // Base repository methods
   findById(id: string): Promise<Account | null>;
-  update(id: string, data: any): Promise<Account>;
-  findMany(where?: any): Promise<Account[]>;
-  create(data: any): Promise<Account>;
+  update(id: string, data: Partial<Account>): Promise<Account>;
+  findMany(where?: Record<string, unknown>): Promise<Account[]>;
+  create(data: Omit<Account, 'id' | 'createdAt' | 'updatedAt'>): Promise<Account>;
   delete(id: string): Promise<boolean>;
 }
 
@@ -32,11 +32,13 @@ export class AuthRepository extends BaseRepository<Account> implements IAuthRepo
    */
   async findByEmail(email: string): Promise<Account | null> {
     try {
-      return await this.model.findUnique({ 
-        where: { email: email.toLowerCase() } 
+      return await this.model.findUnique({
+        where: { email: email.toLowerCase() },
       });
     } catch (error) {
-      throw new Error(`Failed to find account by email: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Failed to find account by email: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     }
   }
 
@@ -68,7 +70,9 @@ export class AuthRepository extends BaseRepository<Account> implements IAuthRepo
           throw new Error('An account with this email already exists');
         }
       }
-      throw new Error(`Failed to create account: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Failed to create account: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     }
   }
 
@@ -82,7 +86,9 @@ export class AuthRepository extends BaseRepository<Account> implements IAuthRepo
     try {
       return await argon2.verify(account.hashedPassword, password);
     } catch (error) {
-      throw new Error(`Failed to verify password: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Failed to verify password: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     }
   }
 
@@ -98,7 +104,9 @@ export class AuthRepository extends BaseRepository<Account> implements IAuthRepo
         data: { lastLoginAt: new Date() },
       });
     } catch (error) {
-      throw new Error(`Failed to update last login: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Failed to update last login: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     }
   }
 
@@ -115,7 +123,9 @@ export class AuthRepository extends BaseRepository<Account> implements IAuthRepo
         data: { hashedPassword },
       });
     } catch (error) {
-      throw new Error(`Failed to update password: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Failed to update password: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     }
   }
 }

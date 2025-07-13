@@ -17,11 +17,8 @@ const RATE_LIMIT_CONFIG = {
 /**
  * Standard error response for rate limit exceeded
  */
-const createRateLimitErrorResponse = (
-  message: string,
-  retryAfter?: number
-) => {
-  const response: any = {
+const createRateLimitErrorResponse = (message: string, retryAfter?: number) => {
+  const response: Record<string, unknown> = {
     success: false,
     error: message,
     type: 'RATE_LIMIT_EXCEEDED',
@@ -42,7 +39,7 @@ const createRateLimitHandler = (limitType: string, customMessage?: string) => {
     const ip = req.ip || 'unknown';
     const userAgent = req.get('User-Agent') || 'unknown';
     const retryAfter = res.getHeader('Retry-After') as number;
-    
+
     logger.warn('Rate limit exceeded', {
       type: limitType,
       ip,
@@ -53,10 +50,10 @@ const createRateLimitHandler = (limitType: string, customMessage?: string) => {
     });
 
     const message = customMessage || 'Too many requests, please try again later.';
-    
-    res.status(HTTP_STATUS.TOO_MANY_REQUESTS).json(
-      createRateLimitErrorResponse(message, retryAfter)
-    );
+
+    res
+      .status(HTTP_STATUS.TOO_MANY_REQUESTS)
+      .json(createRateLimitErrorResponse(message, retryAfter));
   };
 };
 
@@ -82,7 +79,7 @@ export const authRateLimit: RateLimitRequestHandler = rateLimit({
   windowMs: RATE_LIMIT_CONFIG.AUTH_WINDOW_MINUTES * 60 * 1000,
   max: RATE_LIMIT_CONFIG.AUTH_MAX_REQUESTS,
   message: createRateLimitErrorResponse(
-    'Too many authentication attempts from this IP, please try again later.',
+    'Too many authentication attempts from this IP, please try again later.'
   ),
   standardHeaders: RATE_LIMIT_CONFIG.ENABLE_RATE_LIMIT_HEADERS,
   legacyHeaders: false,
@@ -261,11 +258,7 @@ export const getRateLimitInfo = (res: Response) => {
 /**
  * Middleware to add rate limit configuration info to response
  */
-export const addRateLimitInfo = (
-  _req: Request,
-  res: Response,
-  next: NextFunction
-): void => {
+export const addRateLimitInfo = (_req: Request, res: Response, next: NextFunction): void => {
   // Add custom headers for rate limit configuration
   res.setHeader('X-RateLimit-Policy', 'Global: 100/15min, Auth: 5/15min');
   res.setHeader('X-RateLimit-Configured', 'true');

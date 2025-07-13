@@ -10,11 +10,7 @@ import {
   RefreshResponse,
   ProfileResponse,
 } from '../types/auth.schemas';
-import {
-  AuthenticationError,
-  ConflictError,
-  NotFoundError,
-} from '../middleware/error.middleware';
+import { AuthenticationError, ConflictError, NotFoundError } from '../middleware/error.middleware';
 import * as argon2 from 'argon2';
 
 export interface AuthTokens {
@@ -63,7 +59,9 @@ export class AuthService {
       if (error instanceof ConflictError) {
         throw error;
       }
-      throw new Error(`Registration failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Registration failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     }
   }
 
@@ -133,7 +131,7 @@ export class AuthService {
         message: MESSAGES.AUTH.REFRESH_SUCCESS,
         data: tokens,
       };
-    } catch (error) {
+    } catch {
       throw new AuthenticationError('Invalid or expired refresh token');
     }
   }
@@ -192,7 +190,9 @@ export class AuthService {
       if (error instanceof NotFoundError) {
         throw error;
       }
-      throw new Error(`Failed to get profile: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Failed to get profile: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     }
   }
 
@@ -261,10 +261,16 @@ export class AuthService {
         },
       };
     } catch (error) {
-      if (error instanceof NotFoundError || error instanceof ConflictError || error instanceof AuthenticationError) {
+      if (
+        error instanceof NotFoundError ||
+        error instanceof ConflictError ||
+        error instanceof AuthenticationError
+      ) {
         throw error;
       }
-      throw new Error(`Failed to update profile: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Failed to update profile: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     }
   }
 
@@ -275,7 +281,7 @@ export class AuthService {
     try {
       // Find account by email
       const account = await this.authRepository.findByEmail(email);
-      
+
       // Always return success to prevent email enumeration
       // Even if account doesn't exist, we don't reveal this information
       if (!account) {
@@ -296,7 +302,9 @@ export class AuthService {
         message: 'Password recovery email has been sent',
       };
     } catch (error) {
-      throw new Error(`Password recovery failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Password recovery failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     }
   }
 
@@ -306,7 +314,7 @@ export class AuthService {
   private generateTokens(accountId: string, email: string): AuthTokens {
     const accessToken = generateAccessToken(accountId, email);
     const refreshToken = generateRefreshToken(accountId, email);
-    
+
     // Parse expiration time from JWT_EXPIRES_IN (e.g., '24h' -> 24 * 60 * 60 = 86400 seconds)
     const expiresIn = this.parseExpirationTime(SECURITY.JWT_EXPIRES_IN);
 
@@ -330,11 +338,16 @@ export class AuthService {
     const unit = match[2];
 
     switch (unit) {
-      case 's': return value;
-      case 'm': return value * 60;
-      case 'h': return value * 60 * 60;
-      case 'd': return value * 24 * 60 * 60;
-      default: return 86400;
+      case 's':
+        return value;
+      case 'm':
+        return value * 60;
+      case 'h':
+        return value * 60 * 60;
+      case 'd':
+        return value * 24 * 60 * 60;
+      default:
+        return 86400;
     }
   }
 }

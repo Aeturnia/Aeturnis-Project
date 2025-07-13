@@ -1,15 +1,15 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import request from 'supertest';
 import express from 'express';
-import { 
-  generalRateLimit, 
-  authRateLimit, 
+import {
+  generalRateLimit,
+  authRateLimit,
   createCustomRateLimit,
   bankingRateLimiter,
   chatRateLimiter,
   pvpRateLimiter,
   getRateLimitInfo,
-  addRateLimitInfo
+  addRateLimitInfo,
 } from '../../middleware/rateLimit.middleware';
 
 // Mock logger to avoid winston dependency in tests
@@ -18,7 +18,7 @@ vi.mock('../../utils/logger', () => ({
     warn: vi.fn(),
     error: vi.fn(),
     info: vi.fn(),
-  }
+  },
 }));
 
 describe('Rate Limit Middleware', () => {
@@ -39,9 +39,7 @@ describe('Rate Limit Middleware', () => {
         res.json({ success: true });
       });
 
-      const response = await request(app)
-        .get('/test')
-        .expect(200);
+      const response = await request(app).get('/test').expect(200);
 
       expect(response.body.success).toBe(true);
       expect(response.headers['ratelimit-limit']).toBeDefined();
@@ -53,9 +51,7 @@ describe('Rate Limit Middleware', () => {
         res.json({ success: true });
       });
 
-      const response = await request(app)
-        .get('/test')
-        .expect(200);
+      const response = await request(app).get('/test').expect(200);
 
       expect(response.headers['ratelimit-limit']).toBeDefined();
       expect(response.headers['ratelimit-remaining']).toBeDefined();
@@ -69,9 +65,7 @@ describe('Rate Limit Middleware', () => {
         res.json({ success: true });
       });
 
-      const response = await request(app)
-        .post('/auth')
-        .expect(200);
+      const response = await request(app).post('/auth').expect(200);
 
       expect(response.body.success).toBe(true);
       // Auth rate limit should have lower max requests than general
@@ -84,7 +78,7 @@ describe('Rate Limit Middleware', () => {
         windowMinutes: 15,
         maxRequests: 1,
         message: 'Auth limit exceeded',
-        limitType: 'AUTH_TEST'
+        limitType: 'AUTH_TEST',
       });
 
       app.post('/auth-test', strictLimiter, (req, res) => {
@@ -92,14 +86,10 @@ describe('Rate Limit Middleware', () => {
       });
 
       // First request should succeed
-      await request(app)
-        .post('/auth-test')
-        .expect(200);
+      await request(app).post('/auth-test').expect(200);
 
       // Second request should be rate limited
-      const response = await request(app)
-        .post('/auth-test')
-        .expect(429);
+      const response = await request(app).post('/auth-test').expect(429);
 
       expect(response.body).toMatchObject({
         success: false,
@@ -116,7 +106,7 @@ describe('Rate Limit Middleware', () => {
         windowMinutes: 1,
         maxRequests: 3,
         message: 'Custom limit exceeded',
-        limitType: 'CUSTOM_TEST'
+        limitType: 'CUSTOM_TEST',
       });
 
       app.get('/custom', customLimiter, (req, res) => {
@@ -125,15 +115,11 @@ describe('Rate Limit Middleware', () => {
 
       // Make requests up to the limit
       for (let i = 0; i < 3; i++) {
-        await request(app)
-          .get('/custom')
-          .expect(200);
+        await request(app).get('/custom').expect(200);
       }
 
       // Next request should be rate limited
-      const response = await request(app)
-        .get('/custom')
-        .expect(429);
+      const response = await request(app).get('/custom').expect(429);
 
       expect(response.body.error).toBe('Custom limit exceeded');
     });
@@ -142,8 +128,8 @@ describe('Rate Limit Middleware', () => {
       const customLimiter = createCustomRateLimit({
         windowMinutes: 1,
         maxRequests: 1,
-        keyGenerator: (req) => req.headers['x-user-id'] as string || 'default',
-        limitType: 'CUSTOM_KEY_TEST'
+        keyGenerator: (req) => (req.headers['x-user-id'] as string) || 'default',
+        limitType: 'CUSTOM_KEY_TEST',
       });
 
       app.get('/custom-key', customLimiter, (req, res) => {
@@ -151,21 +137,12 @@ describe('Rate Limit Middleware', () => {
       });
 
       // Different user IDs should have separate limits
-      await request(app)
-        .get('/custom-key')
-        .set('x-user-id', 'user1')
-        .expect(200);
+      await request(app).get('/custom-key').set('x-user-id', 'user1').expect(200);
 
-      await request(app)
-        .get('/custom-key')
-        .set('x-user-id', 'user2')
-        .expect(200);
+      await request(app).get('/custom-key').set('x-user-id', 'user2').expect(200);
 
       // Same user should be rate limited
-      await request(app)
-        .get('/custom-key')
-        .set('x-user-id', 'user1')
-        .expect(429);
+      await request(app).get('/custom-key').set('x-user-id', 'user1').expect(429);
     });
   });
 
@@ -175,9 +152,7 @@ describe('Rate Limit Middleware', () => {
         res.json({ success: true });
       });
 
-      const response = await request(app)
-        .post('/bank')
-        .expect(200);
+      const response = await request(app).post('/bank').expect(200);
 
       expect(response.body.success).toBe(true);
     });
@@ -189,9 +164,7 @@ describe('Rate Limit Middleware', () => {
         res.json({ success: true });
       });
 
-      const response = await request(app)
-        .post('/chat')
-        .expect(200);
+      const response = await request(app).post('/chat').expect(200);
 
       expect(response.body.success).toBe(true);
     });
@@ -203,9 +176,7 @@ describe('Rate Limit Middleware', () => {
         res.json({ success: true });
       });
 
-      const response = await request(app)
-        .post('/pvp')
-        .expect(200);
+      const response = await request(app).post('/pvp').expect(200);
 
       expect(response.body.success).toBe(true);
     });
@@ -220,11 +191,11 @@ describe('Rate Limit Middleware', () => {
               'RateLimit-Limit': '100',
               'RateLimit-Remaining': '99',
               'RateLimit-Reset': '1234567890',
-              'Retry-After': '60'
+              'Retry-After': '60',
             };
             return headers[name];
-          })
-        } as any;
+          }),
+        } as Response;
 
         const info = getRateLimitInfo(mockRes);
 
@@ -232,7 +203,7 @@ describe('Rate Limit Middleware', () => {
           limit: '100',
           remaining: '99',
           reset: '1234567890',
-          retryAfter: '60'
+          retryAfter: '60',
         });
       });
     });
@@ -244,9 +215,7 @@ describe('Rate Limit Middleware', () => {
           res.json({ success: true });
         });
 
-        const response = await request(app)
-          .get('/info')
-          .expect(200);
+        const response = await request(app).get('/info').expect(200);
 
         expect(response.headers['x-ratelimit-policy']).toBe('Global: 100/15min, Auth: 5/15min');
         expect(response.headers['x-ratelimit-configured']).toBe('true');
@@ -269,7 +238,7 @@ describe('Rate Limit Middleware', () => {
         windowMinutes: 1,
         maxRequests: 1,
         message: 'Test limit exceeded',
-        limitType: 'ERROR_TEST'
+        limitType: 'ERROR_TEST',
       });
 
       app.get('/error-test', testLimiter, (req, res) => {
@@ -277,14 +246,10 @@ describe('Rate Limit Middleware', () => {
       });
 
       // First request succeeds
-      await request(app)
-        .get('/error-test')
-        .expect(200);
+      await request(app).get('/error-test').expect(200);
 
       // Second request should be rate limited with proper error format
-      const response = await request(app)
-        .get('/error-test')
-        .expect(429);
+      const response = await request(app).get('/error-test').expect(429);
 
       expect(response.body).toMatchObject({
         success: false,

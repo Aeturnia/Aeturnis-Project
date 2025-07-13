@@ -2,11 +2,7 @@ import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
 import { AuthService } from '../../services/auth.service';
 import type { IAuthRepository } from '../../repositories';
 import { Account } from '@prisma/client';
-import {
-  RegisterRequest,
-  LoginRequest,
-  UpdateProfileRequest,
-} from '../../types/auth.schemas';
+import { RegisterRequest, LoginRequest, UpdateProfileRequest } from '../../types/auth.schemas';
 import {
   AuthenticationError,
   ConflictError,
@@ -84,9 +80,19 @@ describe('AuthService', () => {
 
     it('should successfully register a new user', async () => {
       // Setup mocks
-      (mockAuthRepository.findByEmail as any).mockResolvedValue(null);
-      (mockAuthRepository.createAccount as any).mockResolvedValue(mockAccount);
-      (mockAuthRepository.updateLastLogin as any).mockResolvedValue({
+      (
+        mockAuthRepository.findByEmail as vi.MockedFunction<typeof mockAuthRepository.findByEmail>
+      ).mockResolvedValue(null);
+      (
+        mockAuthRepository.createAccount as vi.MockedFunction<
+          typeof mockAuthRepository.createAccount
+        >
+      ).mockResolvedValue(mockAccount);
+      (
+        mockAuthRepository.updateLastLogin as vi.MockedFunction<
+          typeof mockAuthRepository.updateLastLogin
+        >
+      ).mockResolvedValue({
         ...mockAccount,
         lastLoginAt: new Date(),
       });
@@ -115,7 +121,9 @@ describe('AuthService', () => {
     });
 
     it('should throw ConflictError if email already exists', async () => {
-      (mockAuthRepository.findByEmail as any).mockResolvedValue(mockAccount);
+      (
+        mockAuthRepository.findByEmail as vi.MockedFunction<typeof mockAuthRepository.findByEmail>
+      ).mockResolvedValue(mockAccount);
 
       await expect(authService.register(registerData)).rejects.toThrow(ConflictError);
       expect(mockAuthRepository.findByEmail).toHaveBeenCalledWith(registerData.email);
@@ -123,8 +131,14 @@ describe('AuthService', () => {
     });
 
     it('should handle repository errors', async () => {
-      (mockAuthRepository.findByEmail as any).mockResolvedValue(null);
-      (mockAuthRepository.createAccount as any).mockRejectedValue(new Error('Database error'));
+      (
+        mockAuthRepository.findByEmail as vi.MockedFunction<typeof mockAuthRepository.findByEmail>
+      ).mockResolvedValue(null);
+      (
+        mockAuthRepository.createAccount as vi.MockedFunction<
+          typeof mockAuthRepository.createAccount
+        >
+      ).mockRejectedValue(new Error('Database error'));
 
       await expect(authService.register(registerData)).rejects.toThrow('Registration failed');
     });
@@ -138,9 +152,19 @@ describe('AuthService', () => {
 
     it('should successfully login with valid credentials', async () => {
       // Setup mocks
-      (mockAuthRepository.findByEmail as any).mockResolvedValue(mockAccount);
-      (mockAuthRepository.verifyPassword as any).mockResolvedValue(true);
-      (mockAuthRepository.updateLastLogin as any).mockResolvedValue({
+      (
+        mockAuthRepository.findByEmail as vi.MockedFunction<typeof mockAuthRepository.findByEmail>
+      ).mockResolvedValue(mockAccount);
+      (
+        mockAuthRepository.verifyPassword as vi.MockedFunction<
+          typeof mockAuthRepository.verifyPassword
+        >
+      ).mockResolvedValue(true);
+      (
+        mockAuthRepository.updateLastLogin as vi.MockedFunction<
+          typeof mockAuthRepository.updateLastLogin
+        >
+      ).mockResolvedValue({
         ...mockAccount,
         lastLoginAt: new Date(),
       });
@@ -164,12 +188,17 @@ describe('AuthService', () => {
       });
 
       expect(mockAuthRepository.findByEmail).toHaveBeenCalledWith(loginData.email);
-      expect(mockAuthRepository.verifyPassword).toHaveBeenCalledWith(mockAccount, loginData.password);
+      expect(mockAuthRepository.verifyPassword).toHaveBeenCalledWith(
+        mockAccount,
+        loginData.password
+      );
       expect(mockAuthRepository.updateLastLogin).toHaveBeenCalledWith(mockAccount.id);
     });
 
     it('should throw AuthenticationError if account not found', async () => {
-      (mockAuthRepository.findByEmail as any).mockResolvedValue(null);
+      (
+        mockAuthRepository.findByEmail as vi.MockedFunction<typeof mockAuthRepository.findByEmail>
+      ).mockResolvedValue(null);
 
       await expect(authService.login(loginData)).rejects.toThrow(AuthenticationError);
       expect(mockAuthRepository.findByEmail).toHaveBeenCalledWith(loginData.email);
@@ -177,18 +206,29 @@ describe('AuthService', () => {
     });
 
     it('should throw AuthenticationError if password is invalid', async () => {
-      (mockAuthRepository.findByEmail as any).mockResolvedValue(mockAccount);
-      (mockAuthRepository.verifyPassword as any).mockResolvedValue(false);
+      (
+        mockAuthRepository.findByEmail as vi.MockedFunction<typeof mockAuthRepository.findByEmail>
+      ).mockResolvedValue(mockAccount);
+      (
+        mockAuthRepository.verifyPassword as vi.MockedFunction<
+          typeof mockAuthRepository.verifyPassword
+        >
+      ).mockResolvedValue(false);
 
       await expect(authService.login(loginData)).rejects.toThrow(AuthenticationError);
-      expect(mockAuthRepository.verifyPassword).toHaveBeenCalledWith(mockAccount, loginData.password);
+      expect(mockAuthRepository.verifyPassword).toHaveBeenCalledWith(
+        mockAccount,
+        loginData.password
+      );
       expect(mockAuthRepository.updateLastLogin).not.toHaveBeenCalled();
     });
   });
 
   describe('logout', () => {
     it('should successfully logout user', async () => {
-      (mockAuthRepository.findById as any).mockResolvedValue(mockAccount);
+      (
+        mockAuthRepository.findById as vi.MockedFunction<typeof mockAuthRepository.findById>
+      ).mockResolvedValue(mockAccount);
 
       const result = await authService.logout(mockAccount.id);
 
@@ -201,7 +241,9 @@ describe('AuthService', () => {
     });
 
     it('should throw NotFoundError if account not found', async () => {
-      (mockAuthRepository.findById as any).mockResolvedValue(null);
+      (
+        mockAuthRepository.findById as vi.MockedFunction<typeof mockAuthRepository.findById>
+      ).mockResolvedValue(null);
 
       await expect(authService.logout('invalid-id')).rejects.toThrow(NotFoundError);
     });
@@ -209,7 +251,9 @@ describe('AuthService', () => {
 
   describe('getProfile', () => {
     it('should return user profile', async () => {
-      (mockAuthRepository.findById as any).mockResolvedValue(mockAccount);
+      (
+        mockAuthRepository.findById as vi.MockedFunction<typeof mockAuthRepository.findById>
+      ).mockResolvedValue(mockAccount);
 
       const result = await authService.getProfile(mockAccount.id);
 
@@ -229,7 +273,9 @@ describe('AuthService', () => {
     });
 
     it('should throw NotFoundError if account not found', async () => {
-      (mockAuthRepository.findById as any).mockResolvedValue(null);
+      (
+        mockAuthRepository.findById as vi.MockedFunction<typeof mockAuthRepository.findById>
+      ).mockResolvedValue(null);
 
       await expect(authService.getProfile('invalid-id')).rejects.toThrow(NotFoundError);
     });
@@ -240,11 +286,15 @@ describe('AuthService', () => {
       const updates: UpdateProfileRequest = { email: 'new@example.com' };
       const updatedAccount = { ...mockAccount, email: 'new@example.com' };
 
-      (mockAuthRepository.findById as any)
+      (mockAuthRepository.findById as vi.MockedFunction<typeof mockAuthRepository.findById>)
         .mockResolvedValueOnce(mockAccount) // First call
         .mockResolvedValueOnce(updatedAccount); // Final call
-      (mockAuthRepository.findByEmail as any).mockResolvedValue(null);
-      (mockAuthRepository.update as any).mockResolvedValue(updatedAccount);
+      (
+        mockAuthRepository.findByEmail as vi.MockedFunction<typeof mockAuthRepository.findByEmail>
+      ).mockResolvedValue(null);
+      (
+        mockAuthRepository.update as vi.MockedFunction<typeof mockAuthRepository.update>
+      ).mockResolvedValue(updatedAccount);
 
       const result = await authService.updateProfile(mockAccount.id, updates);
 
@@ -259,16 +309,31 @@ describe('AuthService', () => {
         newPassword: 'newpassword',
       };
 
-      (mockAuthRepository.findById as any).mockResolvedValue(mockAccount);
-      (mockAuthRepository.verifyPassword as any).mockResolvedValue(true);
-      (mockAuthRepository.updatePassword as any).mockResolvedValue(mockAccount);
-      (argon2.hash as any).mockResolvedValue('new-hashed-password');
+      (
+        mockAuthRepository.findById as vi.MockedFunction<typeof mockAuthRepository.findById>
+      ).mockResolvedValue(mockAccount);
+      (
+        mockAuthRepository.verifyPassword as vi.MockedFunction<
+          typeof mockAuthRepository.verifyPassword
+        >
+      ).mockResolvedValue(true);
+      (
+        mockAuthRepository.updatePassword as vi.MockedFunction<
+          typeof mockAuthRepository.updatePassword
+        >
+      ).mockResolvedValue(mockAccount);
+      (argon2.hash as vi.MockedFunction<typeof argon2.hash>).mockResolvedValue(
+        'new-hashed-password'
+      );
 
       const result = await authService.updateProfile(mockAccount.id, updates);
 
       expect(result.success).toBe(true);
       expect(mockAuthRepository.verifyPassword).toHaveBeenCalledWith(mockAccount, 'oldpassword');
-      expect(mockAuthRepository.updatePassword).toHaveBeenCalledWith(mockAccount.id, 'new-hashed-password');
+      expect(mockAuthRepository.updatePassword).toHaveBeenCalledWith(
+        mockAccount.id,
+        'new-hashed-password'
+      );
     });
 
     it('should throw AuthenticationError for incorrect current password', async () => {
@@ -277,26 +342,42 @@ describe('AuthService', () => {
         newPassword: 'newpassword',
       };
 
-      (mockAuthRepository.findById as any).mockResolvedValue(mockAccount);
-      (mockAuthRepository.verifyPassword as any).mockResolvedValue(false);
+      (
+        mockAuthRepository.findById as vi.MockedFunction<typeof mockAuthRepository.findById>
+      ).mockResolvedValue(mockAccount);
+      (
+        mockAuthRepository.verifyPassword as vi.MockedFunction<
+          typeof mockAuthRepository.verifyPassword
+        >
+      ).mockResolvedValue(false);
 
-      await expect(authService.updateProfile(mockAccount.id, updates)).rejects.toThrow(AuthenticationError);
+      await expect(authService.updateProfile(mockAccount.id, updates)).rejects.toThrow(
+        AuthenticationError
+      );
     });
 
     it('should throw ConflictError for duplicate email', async () => {
       const updates: UpdateProfileRequest = { email: 'existing@example.com' };
       const existingAccount = { ...mockAccount, id: 'different-id' };
 
-      (mockAuthRepository.findById as any).mockResolvedValue(mockAccount);
-      (mockAuthRepository.findByEmail as any).mockResolvedValue(existingAccount);
+      (
+        mockAuthRepository.findById as vi.MockedFunction<typeof mockAuthRepository.findById>
+      ).mockResolvedValue(mockAccount);
+      (
+        mockAuthRepository.findByEmail as vi.MockedFunction<typeof mockAuthRepository.findByEmail>
+      ).mockResolvedValue(existingAccount);
 
-      await expect(authService.updateProfile(mockAccount.id, updates)).rejects.toThrow(ConflictError);
+      await expect(authService.updateProfile(mockAccount.id, updates)).rejects.toThrow(
+        ConflictError
+      );
     });
   });
 
   describe('recoverPassword', () => {
     it('should return success for existing account', async () => {
-      (mockAuthRepository.findByEmail as any).mockResolvedValue(mockAccount);
+      (
+        mockAuthRepository.findByEmail as vi.MockedFunction<typeof mockAuthRepository.findByEmail>
+      ).mockResolvedValue(mockAccount);
 
       const result = await authService.recoverPassword('test@example.com');
 
@@ -307,7 +388,9 @@ describe('AuthService', () => {
     });
 
     it('should return success for non-existing account to prevent enumeration', async () => {
-      (mockAuthRepository.findByEmail as any).mockResolvedValue(null);
+      (
+        mockAuthRepository.findByEmail as vi.MockedFunction<typeof mockAuthRepository.findByEmail>
+      ).mockResolvedValue(null);
 
       const result = await authService.recoverPassword('nonexistent@example.com');
 
@@ -323,8 +406,12 @@ describe('AuthService', () => {
       const refreshToken = 'valid-refresh-token';
       const mockPayload = { accountId: mockAccount.id, email: mockAccount.email };
 
-      (jwtUtils.verifyToken as any).mockResolvedValue(mockPayload);
-      (mockAuthRepository.findByEmail as any).mockResolvedValue(mockAccount);
+      (jwtUtils.verifyToken as vi.MockedFunction<typeof jwtUtils.verifyToken>).mockResolvedValue(
+        mockPayload
+      );
+      (
+        mockAuthRepository.findByEmail as vi.MockedFunction<typeof mockAuthRepository.findByEmail>
+      ).mockResolvedValue(mockAccount);
 
       const result = await authService.refreshToken(refreshToken);
 
@@ -342,7 +429,9 @@ describe('AuthService', () => {
     });
 
     it('should throw AuthenticationError for invalid token', async () => {
-      (jwtUtils.verifyToken as any).mockRejectedValue(new Error('Invalid token'));
+      (jwtUtils.verifyToken as vi.MockedFunction<typeof jwtUtils.verifyToken>).mockRejectedValue(
+        new Error('Invalid token')
+      );
 
       await expect(authService.refreshToken('invalid-token')).rejects.toThrow(AuthenticationError);
     });
@@ -351,8 +440,12 @@ describe('AuthService', () => {
       const refreshToken = 'valid-refresh-token';
       const mockPayload = { accountId: 'deleted-account', email: 'deleted@example.com' };
 
-      (jwtUtils.verifyToken as any).mockResolvedValue(mockPayload);
-      (mockAuthRepository.findByEmail as any).mockResolvedValue(null);
+      (jwtUtils.verifyToken as vi.MockedFunction<typeof jwtUtils.verifyToken>).mockResolvedValue(
+        mockPayload
+      );
+      (
+        mockAuthRepository.findByEmail as vi.MockedFunction<typeof mockAuthRepository.findByEmail>
+      ).mockResolvedValue(null);
 
       await expect(authService.refreshToken(refreshToken)).rejects.toThrow(AuthenticationError);
     });
@@ -360,9 +453,19 @@ describe('AuthService', () => {
 
   describe('generateTokens', () => {
     it('should generate tokens with correct expiration time', async () => {
-      (mockAuthRepository.findByEmail as any).mockResolvedValue(null);
-      (mockAuthRepository.createAccount as any).mockResolvedValue(mockAccount);
-      (mockAuthRepository.updateLastLogin as any).mockResolvedValue(mockAccount);
+      (
+        mockAuthRepository.findByEmail as vi.MockedFunction<typeof mockAuthRepository.findByEmail>
+      ).mockResolvedValue(null);
+      (
+        mockAuthRepository.createAccount as vi.MockedFunction<
+          typeof mockAuthRepository.createAccount
+        >
+      ).mockResolvedValue(mockAccount);
+      (
+        mockAuthRepository.updateLastLogin as vi.MockedFunction<
+          typeof mockAuthRepository.updateLastLogin
+        >
+      ).mockResolvedValue(mockAccount);
 
       const registerData: RegisterRequest = {
         email: 'test@example.com',
@@ -384,9 +487,19 @@ describe('AuthService', () => {
     it('should parse different time formats correctly', async () => {
       // Test that the service can handle different expiration formats
       // This is tested indirectly through the register method
-      (mockAuthRepository.findByEmail as any).mockResolvedValue(null);
-      (mockAuthRepository.createAccount as any).mockResolvedValue(mockAccount);
-      (mockAuthRepository.updateLastLogin as any).mockResolvedValue(mockAccount);
+      (
+        mockAuthRepository.findByEmail as vi.MockedFunction<typeof mockAuthRepository.findByEmail>
+      ).mockResolvedValue(null);
+      (
+        mockAuthRepository.createAccount as vi.MockedFunction<
+          typeof mockAuthRepository.createAccount
+        >
+      ).mockResolvedValue(mockAccount);
+      (
+        mockAuthRepository.updateLastLogin as vi.MockedFunction<
+          typeof mockAuthRepository.updateLastLogin
+        >
+      ).mockResolvedValue(mockAccount);
 
       const result = await authService.register({
         email: 'test@example.com',

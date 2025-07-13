@@ -1,10 +1,10 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { 
-  helmetConfig, 
-  securityConfig, 
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import {
+  helmetConfig,
+  securityConfig,
   getSecurityLevel,
   apiSecurityHeaders,
-  developmentOverrides
+  developmentOverrides,
 } from '../../config/security.config';
 
 describe('Security Configuration', () => {
@@ -22,7 +22,7 @@ describe('Security Configuration', () => {
     it('should have proper CSP configuration', () => {
       expect(helmetConfig.contentSecurityPolicy).toBeDefined();
       expect(helmetConfig.contentSecurityPolicy?.directives).toBeDefined();
-      
+
       const directives = helmetConfig.contentSecurityPolicy?.directives as Record<string, string[]>;
       expect(directives['default-src']).toContain("'self'");
       expect(directives['frame-src']).toContain("'none'");
@@ -64,7 +64,12 @@ describe('Security Configuration', () => {
       expect(securityConfig.cors.origin).toContain('http://localhost:3001');
       expect(securityConfig.cors.credentials).toBe(true);
       expect(securityConfig.cors.methods).toEqual([
-        'GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'
+        'GET',
+        'POST',
+        'PUT',
+        'DELETE',
+        'PATCH',
+        'OPTIONS',
       ]);
     });
 
@@ -117,7 +122,7 @@ describe('Security Configuration', () => {
     it('should be a frozen object', () => {
       expect(Object.isFrozen(apiSecurityHeaders)).toBe(false); // const assertion doesn't freeze
       // But the values should be strings
-      Object.values(apiSecurityHeaders).forEach(value => {
+      Object.values(apiSecurityHeaders).forEach((value) => {
         expect(typeof value).toBe('string');
       });
     });

@@ -37,8 +37,8 @@ describe('AuthController', () => {
   let mockAuthService: vi.Mocked<AuthService>;
   let mockRequest: Partial<Request>;
   let mockResponse: Partial<Response>;
-  let mockJson: vi.MockedFunction<any>;
-  let mockStatus: vi.MockedFunction<any>;
+  let mockJson: vi.MockedFunction<(value: unknown) => Response>;
+  let mockStatus: vi.MockedFunction<(code: number) => { json: typeof mockJson }>;
 
   beforeEach(() => {
     // Create mocked response methods
@@ -69,10 +69,10 @@ describe('AuthController', () => {
       getProfile: vi.fn(),
       updateProfile: vi.fn(),
       recoverPassword: vi.fn(),
-    } as any;
+    } as vi.Mocked<AuthService>;
 
     // Mock container to return our mock service
-    (Container.getInstance as any).mockReturnValue({
+    (Container.getInstance as vi.MockedFunction<typeof Container.getInstance>).mockReturnValue({
       getAuthService: () => mockAuthService,
     });
 
@@ -474,15 +474,15 @@ describe('AuthController', () => {
         password: 'password123',
       };
       mockRequest.body = validRegisterData;
-      
+
       const mockResponse = {
         success: true,
         message: 'Registration successful',
-        data: expect.any(Object),
+        data: expect.any(Object) as Record<string, unknown>,
       };
       mockAuthService.register.mockResolvedValue(mockResponse);
 
-      await authController.register(mockRequest as Request, mockResponse as any);
+      await authController.register(mockRequest as Request, mockResponse as Response);
 
       expect(mockAuthService.register).toHaveBeenCalledWith(validRegisterData);
     });
@@ -494,14 +494,14 @@ describe('AuthController', () => {
         extraField: 'should-be-ignored', // This should be filtered by validation middleware
       };
       mockRequest.body = requestData;
-      
+
       mockAuthService.register.mockResolvedValue({
         success: true,
         message: 'Success',
-        data: expect.any(Object),
+        data: expect.any(Object) as Record<string, unknown>,
       });
 
-      await authController.register(mockRequest as Request, mockResponse as any);
+      await authController.register(mockRequest as Request, mockResponse as Response);
 
       // Controller should pass the entire body - validation middleware handles filtering
       expect(mockAuthService.register).toHaveBeenCalledWith(requestData);
