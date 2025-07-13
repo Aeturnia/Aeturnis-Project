@@ -1,6 +1,6 @@
 # DDERF Issues Log
 
-**Version**: 0.2.0  
+**Version**: 0.2.1  
 **Created**: 2025-07-12  
 **Last Updated**: 2025-07-13  
 **Purpose**: Centralized tracking of all Detect→Diagnose→Explain→Resolve→Fix
@@ -225,6 +225,52 @@ placeholders to restore coverage above 90%.
 
 [Pending implementation]
 
+### [DDERF-006] Test Data Foreign Key Constraint Violations
+
+- **Detected**: 2025-07-13 via CI pipeline failure after coverage threshold
+  adjustment
+- **Catalog Tag**: N/A (pre-existing test issue)
+- **Error Type**: TYPE-D (Data Flow Problems)
+- **Severity**: High
+- **Status**: Open
+
+#### 1. Detect
+
+Multiple test failures with PostgreSQL foreign key constraint violations:
+
+- Character creation fails: violates foreign key constraint
+  "Character_accountId_fkey"
+- Transaction creation fails: violates foreign key constraint
+  "Transaction_bankAccountId_fkey"
+- XpLedger creation fails: violates foreign key constraint
+  "XpLedger_characterId_fkey"
+- PkKillLog creation fails: violates foreign key constraint
+  "PkKillLog_attackerId_fkey"
+
+#### 2. Diagnose
+
+Tests are attempting to create child records (Character, Transaction, etc.)
+without first creating the required parent records (Account, BankAccount). The
+test data generation functions don't handle relational dependencies.
+
+#### 3. Explain
+
+This is a pre-existing test data isolation issue. Each test generates unique IDs
+but doesn't ensure that foreign key references point to existing records in the
+database. The issue was masked when coverage was at 91.66% but revealed when all
+tests ran after architecture changes.
+
+#### 4. Resolve
+
+1. Update test data generation functions to create parent records before child
+   records
+2. Use test fixtures or factory patterns to handle relational data setup
+3. Ensure proper test isolation with database transactions or cleanup
+
+#### 5. Fix
+
+[Pending implementation]
+
 ---
 
 ## Resolved Issues
@@ -263,11 +309,11 @@ Per DDERF methodology:
 
 ## Statistics
 
-- Total Issues: 5
-- Open: 3 (DDERF-002, DDERF-004, DDERF-005)
+- Total Issues: 6
+- Open: 4 (DDERF-002, DDERF-004, DDERF-005, DDERF-006)
 - Resolved: 2 (DDERF-001, DDERF-003)
 - Critical: 0
-- High: 1 (DDERF-004)
+- High: 2 (DDERF-004, DDERF-006)
 - Medium: 2 (DDERF-002, DDERF-005)
 - Low: 0
 
