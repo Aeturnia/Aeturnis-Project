@@ -1,19 +1,37 @@
-# Replit Environment Setup
+# Aeturnis Online - Project Documentation
 
 ## Overview
 
-This is a minimal Python repository that serves as a basic development environment setup. The repository contains only a simple entry point script that confirms the environment is ready for development.
+This is a comprehensive documentation repository for Aeturnis Online, a full-scale MMORPG project. The repository contains extensive documentation, methodologies, and project management resources following a sophisticated development framework called CAFE (Contract-First, AI-Facilitated Engineering).
+
+**My Role**: Frontend Specialist under CAFE v2.0 Division Protocol
+- Own all UI/UX implementation
+- Create React components and views
+- Handle client-side state management
+- Implement responsive design
+- Manage client-side performance
 
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.
+DO NOT CODE anything without explicit instructions - user has their own plans.
 
 ## System Architecture
 
-The current repository represents a minimal Python environment with:
-- A single entry point script (`main.py`)
-- Basic Python 3 execution environment
-- No external dependencies or frameworks currently implemented
+### Frontend Stack (My Responsibility)
+- **Framework**: React with TypeScript
+- **State Management**: Redux Toolkit
+- **Styling**: CSS-in-JS (Emotion/Styled Components)
+- **Bundler**: Vite
+- **Testing**: Jest + React Testing Library
+
+### Package Management
+- **Yarn**: Primary package manager (NOT npm)
+- All commands should use `yarn` instead of `npm`
+
+### Database
+- **PostgreSQL**: Provisioned and ready for use
+- Environment variables available: DATABASE_URL, PGPORT, PGUSER, PGPASSWORD, PGDATABASE, PGHOST
 
 ## Key Components
 
