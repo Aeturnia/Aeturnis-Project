@@ -1,15 +1,8 @@
-import { describe, it, expect, beforeEach } from 'vitest';
-import { PrismaClient } from '@prisma/client';
+import { describe, it, expect } from 'vitest';
+import { prisma } from '@/lib/prisma';
 import bcrypt from 'bcryptjs';
 
-const prisma = new PrismaClient();
-
 describe('Account Model CRUD', () => {
-  beforeEach(async () => {
-    // Clean up before each test
-    await prisma.account.deleteMany();
-  });
-
   it('should create an account', async () => {
     const hashedPassword = await bcrypt.hash('password123', 10);
     const account = await prisma.account.create({

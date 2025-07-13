@@ -1,0 +1,10 @@
+# Controllers Directory
+
+This directory contains HTTP route handlers following the pattern:
+Controller → Service → Repository → Database
+
+Controllers handle:
+- HTTP request/response processing
+- Input validation delegation
+- Service method invocation
+- Response formatting

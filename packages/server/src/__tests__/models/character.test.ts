@@ -1,22 +1,13 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { prisma } from '@/lib/prisma';
+import { createAccount } from '../helpers/factories';
 
 describe('Character Model CRUD', () => {
   let accountId: string;
 
   beforeEach(async () => {
-    // Clean up and create test account
-    await prisma.character.deleteMany();
-    await prisma.account.deleteMany();
-
-    const account = await prisma.account.create({
-      data: {
-        email: `character-test-${Date.now()}@example.com`,
-        hashedPassword: 'hash',
-      },
-    });
+    // Create test account using factory
+    const account = await createAccount();
     accountId = account.id;
   });
 
@@ -60,7 +51,7 @@ describe('Character Model CRUD', () => {
 
     expect(found).toBeDefined();
     expect(found?.name).toContain('ReadHero-');
-    expect(found?.account.email).toContain('character-test-');
+    expect(found?.account.email).toContain('@example.com');
   });
 
   it('should update character stats', async () => {

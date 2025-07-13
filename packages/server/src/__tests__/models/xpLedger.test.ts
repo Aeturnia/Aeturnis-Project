@@ -1,40 +1,14 @@
-import { describe, it, expect, beforeEach } from 'vitest';
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { describe, it, expect } from 'vitest';
+import { prisma } from '@/lib/prisma';
+import { createAccountWithCharacter } from '../helpers/factories';
 
 describe('XpLedger Model CRUD', () => {
-  let characterId: string;
-
-  beforeEach(async () => {
-    // Clean up and create test data
-    await prisma.xpLedger.deleteMany();
-    await prisma.character.deleteMany();
-    await prisma.account.deleteMany();
-
-    const account = await prisma.account.create({
-      data: {
-        email: `xp-test-${Date.now()}@example.com`,
-        hashedPassword: 'hash',
-      },
-    });
-
-    const character = await prisma.character.create({
-      data: {
-        accountId: account.id,
-        name: `XpTestHero-${Date.now()}`,
-        level: 5,
-        experience: 5000,
-      },
-    });
-
-    characterId = character.id;
-  });
-
   it('should create an XP gain entry', async () => {
+    const { character } = await createAccountWithCharacter();
+
     const xpEntry = await prisma.xpLedger.create({
       data: {
-        characterId,
+        characterId: character.id,
         xpChange: 500,
         reason: 'Quest completed: Save the Village',
       },
@@ -48,9 +22,11 @@ describe('XpLedger Model CRUD', () => {
   });
 
   it('should create an XP loss entry (death penalty)', async () => {
+    const { character } = await createAccountWithCharacter();
+
     const xpEntry = await prisma.xpLedger.create({
       data: {
-        characterId,
+        characterId: character.id,
         xpChange: -1000,
         reason: 'Death penalty (20% XP loss)',
       },
@@ -61,9 +37,11 @@ describe('XpLedger Model CRUD', () => {
   });
 
   it('should read XP entries with character', async () => {
+    const { character } = await createAccountWithCharacter();
+
     const xpEntry = await prisma.xpLedger.create({
       data: {
-        characterId,
+        characterId: character.id,
         xpChange: 250,
         reason: 'Monster kill: Dragon',
       },
@@ -77,29 +55,31 @@ describe('XpLedger Model CRUD', () => {
     });
 
     expect(found).toBeDefined();
-    expect(found?.character.name).toContain('XpTestHero-');
+    expect(found?.character.id).toBe(character.id);
   });
 
   it('should find all XP entries for a character', async () => {
+    const { character } = await createAccountWithCharacter();
+
     await prisma.xpLedger.createMany({
       data: [
         {
-          characterId,
+          characterId: character.id,
           xpChange: 100,
           reason: 'Monster kill: Goblin',
         },
         {
-          characterId,
+          characterId: character.id,
           xpChange: 200,
           reason: 'Monster kill: Orc',
         },
         {
-          characterId,
+          characterId: character.id,
           xpChange: -500,
           reason: 'Death penalty',
         },
         {
-          characterId,
+          characterId: character.id,
           xpChange: 1000,
           reason: 'Quest completed',
         },
@@ -107,7 +87,7 @@ describe('XpLedger Model CRUD', () => {
     });
 
     const entries = await prisma.xpLedger.findMany({
-      where: { characterId },
+      where: { characterId: character.id },
       orderBy: { timestamp: 'desc' },
     });
 
@@ -117,20 +97,22 @@ describe('XpLedger Model CRUD', () => {
   });
 
   it('should calculate total XP changes', async () => {
+    const { character } = await createAccountWithCharacter();
+
     await prisma.xpLedger.createMany({
       data: [
         {
-          characterId,
+          characterId: character.id,
           xpChange: 1000,
           reason: 'Quest 1',
         },
         {
-          characterId,
+          characterId: character.id,
           xpChange: 500,
           reason: 'Quest 2',
         },
         {
-          characterId,
+          characterId: character.id,
           xpChange: -300,
           reason: 'Death penalty',
         },
@@ -138,7 +120,7 @@ describe('XpLedger Model CRUD', () => {
     });
 
     const total = await prisma.xpLedger.aggregate({
-      where: { characterId },
+      where: { characterId: character.id },
       _sum: {
         xpChange: true,
       },
@@ -148,20 +130,22 @@ describe('XpLedger Model CRUD', () => {
   });
 
   it('should find XP losses only', async () => {
+    const { character } = await createAccountWithCharacter();
+
     await prisma.xpLedger.createMany({
       data: [
         {
-          characterId,
+          characterId: character.id,
           xpChange: 100,
           reason: 'Gain',
         },
         {
-          characterId,
+          characterId: character.id,
           xpChange: -200,
           reason: 'Loss 1',
         },
         {
-          characterId,
+          characterId: character.id,
           xpChange: -300,
           reason: 'Loss 2',
         },
@@ -170,7 +154,7 @@ describe('XpLedger Model CRUD', () => {
 
     const losses = await prisma.xpLedger.findMany({
       where: {
-        characterId,
+        characterId: character.id,
         xpChange: { lt: 0 },
       },
     });
@@ -180,9 +164,11 @@ describe('XpLedger Model CRUD', () => {
   });
 
   it('should order entries by timestamp', async () => {
+    const { character } = await createAccountWithCharacter();
+
     const entry1 = await prisma.xpLedger.create({
       data: {
-        characterId,
+        characterId: character.id,
         xpChange: 100,
         reason: 'First',
         timestamp: new Date('2025-01-01'),
@@ -191,7 +177,7 @@ describe('XpLedger Model CRUD', () => {
 
     const entry2 = await prisma.xpLedger.create({
       data: {
-        characterId,
+        characterId: character.id,
         xpChange: 200,
         reason: 'Second',
         timestamp: new Date('2025-01-02'),
@@ -199,7 +185,7 @@ describe('XpLedger Model CRUD', () => {
     });
 
     const entries = await prisma.xpLedger.findMany({
-      where: { characterId },
+      where: { characterId: character.id },
       orderBy: { timestamp: 'asc' },
     });
 

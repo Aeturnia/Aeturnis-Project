@@ -1,0 +1,8 @@
+# Middleware Directory
+
+This directory contains Express middleware for:
+- Authentication (JWT verification)
+- Request validation (Zod schemas)
+- Rate limiting
+- Error handling
+- Logging

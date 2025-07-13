@@ -1,0 +1,7 @@
+# Repositories Directory
+
+This directory contains data access layer abstractions that:
+- Wrap Prisma client calls
+- Provide testable interfaces
+- Handle database transactions
+- Implement data access patterns

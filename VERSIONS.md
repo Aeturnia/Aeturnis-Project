@@ -1,16 +1,16 @@
 # Current Versions
 
-**Last Updated**: 2025-07-13
+**Last Updated**: 2025-07-13 **Codename**: Jörmun (Foundation)
 
 ## Production
 
-- Server: v1.0.0
-- Client: v1.0.0
+- Server: v1.0.0 "Jörmun"
+- Client: v1.0.0 "Jörmun"
 
 ## Development
 
-- Server: v1.1.0-dev
-- Client: v1.1.0-dev
+- Server: v1.1.0-dev "Jörmun"
+- Client: v1.1.0-dev "Jörmun"
 
 ## Next Release
 
@@ -20,14 +20,14 @@
 
 ## Compatibility Matrix
 
-| Server Version | Compatible Client Versions | Notes                                |
-| -------------- | -------------------------- | ------------------------------------ |
-| v1.0.x         | v1.0.x                     | Current stable - Foundation complete |
+| Server Version  | Compatible Client Versions | Notes                                       |
+| --------------- | -------------------------- | ------------------------------------------- |
+| v1.0.x "Jörmun" | v1.0.x "Jörmun"            | Current stable - Core architecture complete |
 
 ## Current Phase Status
 
 - **Phase**: 1 (MVP - Core Game Loop)
-- **Progress**: 4/32 systems implemented (12.5%)
+- **Progress**: 5/32 systems implemented (15.6%)
 - **Next Major System**: Banking Service ([P1-S7-1])
 
 ## Version Requirements for Next Release
