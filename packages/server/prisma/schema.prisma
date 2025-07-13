@@ -1,0 +1,130 @@
+// This is your Prisma schema file for Aeturnis Online Phase 1
+// Learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Account model - tracks user credentials and metadata
+model Account {
+  id             String      @id @default(cuid())
+  email          String      @unique
+  hashedPassword String
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+  lastLoginAt    DateTime?
+  isActive       Boolean     @default(true)
+  characters     Character[]
+
+  @@index([email])
+  @@map("accounts")
+}
+
+// Character model - stores character slots per account
+model Character {
+  id           String        @id @default(cuid())
+  accountId    String
+  name         String        @unique
+  level        Int           @default(1)
+  experience   Int           @default(0)
+  gold         Int           @default(0) // Gold on character (not banked)
+  alignment    Int           @default(0) // -1000 to +1000
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  lastPlayedAt DateTime?
+  isDeleted    Boolean       @default(false)
+  
+  // Relations
+  account      Account       @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  bankAccount  BankAccount?
+  transactions Transaction[]
+  xpLedger     XpLedger[]
+  kills        PkKillLog[]   @relation("killer")
+  deaths       PkKillLog[]   @relation("victim")
+
+  @@index([accountId])
+  @@index([name])
+  @@index([level])
+  @@map("characters")
+}
+
+// BankAccount model - links to Character with banking info
+model BankAccount {
+  id           String      @id @default(cuid())
+  characterId  String      @unique
+  balance      Int         @default(0)
+  lastBankedAt DateTime?
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  
+  // Relations
+  character    Character   @relation(fields: [characterId], references: [id], onDelete: Cascade)
+
+  @@index([characterId])
+  @@map("bank_accounts")
+}
+
+// Transaction model - records banking operations
+model Transaction {
+  id          String          @id @default(cuid())
+  characterId String
+  amount      Int
+  type        TransactionType
+  description String?
+  timestamp   DateTime        @default(now())
+  
+  // Relations
+  character   Character       @relation(fields: [characterId], references: [id], onDelete: Cascade)
+
+  @@index([characterId])
+  @@index([timestamp])
+  @@map("transactions")
+}
+
+// XpLedger model - logs XP gains and losses
+model XpLedger {
+  id          String    @id @default(cuid())
+  characterId String
+  xpChange    Int       // Positive for gains, negative for losses
+  reason      String
+  timestamp   DateTime  @default(now())
+  
+  // Relations
+  character   Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
+
+  @@index([characterId])
+  @@index([timestamp])
+  @@map("xp_ledger")
+}
+
+// PkKillLog model - logs PvP kills
+model PkKillLog {
+  id         String    @id @default(cuid())
+  killerId   String
+  victimId   String
+  timestamp  DateTime  @default(now())
+  zoneId     String?   // Optional: zone where kill occurred
+  
+  // Relations
+  killer     Character @relation("killer", fields: [killerId], references: [id], onDelete: Cascade)
+  victim     Character @relation("victim", fields: [victimId], references: [id], onDelete: Cascade)
+
+  @@index([killerId])
+  @@index([victimId])
+  @@index([timestamp])
+  @@map("pk_kill_logs")
+}
+
+// Enums
+enum TransactionType {
+  DEPOSIT
+  WITHDRAWAL
+  INTEREST
+  FEE
+  DEATH_PENALTY
+}
